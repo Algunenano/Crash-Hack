@@ -372,9 +372,14 @@ int writeimage (string _route, img& _buf)
     
     fclose (fl);
     // FREE ALL MEMORY!
-    if (infop != NULL) png_free_data(pngp, infop, PNG_FREE_ALL, -1);
-    if (pngp != NULL) png_destroy_write_struct(&pngp, (png_infopp)NULL);
     if (row != NULL) free (row);
+    if (infop != NULL)
+    {
+        png_destroy_info_struct (pngp, &infop );
+        png_free_data(pngp, infop, PNG_FREE_ALL, -1);
+    }
+    if (pngp != NULL) png_destroy_write_struct(&pngp, (png_infopp)NULL);
+    
  
     return ret;
     
@@ -393,12 +398,12 @@ int main (int argc, char** argv)
     
     
     
-    for (int i = 0; i < buf->height; i++)
-    {
-        for (int a = 0; a < buf->width; a++)
-            printf("%6lx ",buf->colorbuffer[i * buf->width + a]);
-        printf("\n");
-    }
+//    for (int i = 0; i < buf->height; i++)
+//    {
+//        for (int a = 0; a < buf->width; a++)
+//            printf("%6lx ",buf->colorbuffer[i * buf->width + a]);
+//        printf("\n");
+//    }
     
     writeimage ("example.png", buf.operator *());
     
