@@ -1,0 +1,7 @@
+/nbproject/
+.cproject
+.project
+*~
+/.settings/
+build/
+*.png

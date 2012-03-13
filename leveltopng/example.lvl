@@ -1,0 +1,21 @@
+#Se puede sobrescribir valores (bueno el último)
+#Todos los intervalos son incluídos
+# Valores aceptados: Decimal, 0x(Hexadecimal), 0(Octal)
+#S Anchura Altura ValorDefecto
+#S 5 5 0x0000FF
+#Columna Valor Columna [[Inicio] [Fin]]
+#C 0xFF0000 2
+#C 255 3 2 10
+#C 1 4 4
+#C 1 0 2 0
+#Fila Valor Fila [[Inicio] [Fin]]
+#R 0xFFFF00 0
+#R 0xDADADA 4 1 3
+#Celda Valor Columna Fila
+#X 0xFFFFFF 0 2
+#X 0xDADA 0 3
+
+S 10 10 0xFFFFFF
+R 0xFF0000 2
+C 0x00FF00 0
+R 0x0000FF 6 3 7

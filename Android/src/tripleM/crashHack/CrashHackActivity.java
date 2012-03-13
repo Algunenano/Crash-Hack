@@ -1,6 +1,6 @@
 package tripleM.crashHack;
 
-import tripleM.CrashHack.CrashHack;
+import tripleM.CrashHack.General.CrashHack;
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
