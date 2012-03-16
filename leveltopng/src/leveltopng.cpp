@@ -10,6 +10,7 @@
 #include <fstream>
 #include <vector>
 #include <png.h>
+#include <getopt.h>
 
 #include "leveltopng.hpp"
 
@@ -385,27 +386,77 @@ int writeimage (string _route, img& _buf)
     
 }
 
+const char* G_stropts = "hf:o:";
+static struct option G_longopts[] =
+{
+    	{ "help",       no_argument,            0,      'h'},
+	{ "output",     optional_argument,      0,      'o'},
+        { "file",       required_argument,      0,      'f'},
+	{ NULL, 0, NULL, 0 }
+};
+
+void print_help(char *name)
+{
+    printf("Usage: %s [OPTIONS]\n\
+Options:\n\
+  -f, --file=INPUT\t\tselects the input file with the description (Required)\n\
+  -o, --output=FILE\t\tselects where to put the output (Default: ${input}.png)\n\
+  -h, --help\t\t\tshows this list\n",
+            name);
+}
+
+
+
 int main (int argc, char** argv)
 {
+    string inputfile = "";
+    string outputfile = "";
+    
+    int optc;
+    while ((optc = getopt_long (argc, argv, G_stropts, G_longopts, NULL))!=-1){
+        switch (optc)
+        {
+            case 'h':
+                print_help(argv[0]);
+                exit(EXIT_SUCCESS);
+            case 'o':
+            {
+                outputfile.assign(optarg);
+                break;
+            }
+            case 'f':
+            {
+                inputfile.assign(optarg);
+                break;
+            }
+            default:
+                print_help(argv[0]);
+                exit(EXIT_SUCCESS);
+        }
+    }
+    
+    if (inputfile.length() == 0)
+    {
+        fprintf(stderr,"Input file required\n");
+        print_help(argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    
+    if (outputfile.length() == 0)
+        outputfile = inputfile + ".png";
+    
+    
+    
     shared_ptr<struct img> buf (new struct img, imgDeleter);
     
     
-    if ((File2Buffer("example.lvl", buf.operator *()) != 0) || (buf->colorbuffer == nullptr))
+    if ((File2Buffer(inputfile, buf.operator *()) != 0) || (buf->colorbuffer == nullptr))
     {
         fprintf(stderr,"Error reading file, or something\n");
         exit(EXIT_FAILURE);
     }
     
-    
-    
-//    for (int i = 0; i < buf->height; i++)
-//    {
-//        for (int a = 0; a < buf->width; a++)
-//            printf("%6lx ",buf->colorbuffer[i * buf->width + a]);
-//        printf("\n");
-//    }
-    
-    writeimage ("example.png", buf.operator *());
+    writeimage (outputfile, buf.operator *());
     
     return (EXIT_SUCCESS);
 }
