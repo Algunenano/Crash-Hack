@@ -7,7 +7,8 @@ public class DesktopStarter {
 		new JoglApplication(
 				new CrashHack(),
 				"Crash Hack",
-				480, 320,
+				CrashHack.GAME_WIDTH,
+				CrashHack.GAME_HEIGHT,
 				false);
 	}
 
