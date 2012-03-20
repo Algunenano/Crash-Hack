@@ -1,1 +1,5 @@
-Esto está más vacío que una bolsa de caramelos en una puerta de un colegio Oo
+Android/	Eclipse project of the game for Android
+Desktop/	Same for desktop
+leveltopng/	Aux app for map creation
+
+LICENSE = CUSTOM (Use as you want, don't blame us if it goes wrong)
