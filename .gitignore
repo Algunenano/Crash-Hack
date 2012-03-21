@@ -11,9 +11,9 @@
 #Generated files
 */bin/*
 */gen/*
+*.log
 
 #Local configuration file
 local.properties
 
-/LeveltoPng/nbproject/private/
 /leveltopng/nbproject/private/

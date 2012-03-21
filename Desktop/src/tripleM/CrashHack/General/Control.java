@@ -1,144 +1,178 @@
 package tripleM.CrashHack.General;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 
-public class Control
+public class Control implements InputProcessor
 {
-	private double padX;
-	private double padY;
-	private double padSize;
-	private boolean padEnabled;
-	private double buttonAX;
-	private double buttonAY;
-	private double buttonASize;
-	private boolean buttonAEnabled;
-	private double buttonBX;
-	private double buttonBY;
-	private double buttonBSize;
-	private boolean buttonBEnabled;
+	private static final int TOTALBUTTONS = 7;
+	public static final int UP = 0;
+	public static final int DOWN = 1;
+	public static final int LEFT = 2;
+	public static final int RIGHT = 3;
+	public static final int A = 4;
+	public static final int B = 5;
+	public static final int PAD = 6;
+	public int[] pressed;
+	public int[] previous;
+	public static final int NOTPRESSED = -1;
+	
+	
+	private int padX;
+	private int padY;
+	private int padRad;
+	private int buttonAX;
+	private int buttonAY;
+	private int buttonARad;
+	private int buttonBX;
+	private int buttonBY;
+	private int buttonBRad;	
+	
+	
 	
 	public Control ()
 	{
-		padEnabled = false;
-		buttonAEnabled = false;
-		buttonBEnabled = false;
+		pressed = new int [TOTALBUTTONS];
+		for (int i = 0; i < TOTALBUTTONS; i++)
+			pressed[i] = NOTPRESSED;
+			
 	}
 	
-	public void placePad(double padX, double padY, double padSize)
+	public void placePad(int _padX, int _padY, int _padRad)
 	{
-		this.padX = padX;
-		this.padY = padY;
-		this.padSize = padSize * padSize / 4;
+		this.padX = _padX;
+		this.padY = _padY;
+		this.padRad = _padRad;
 	}
 	
-	public void placeButtonA(double buttonAX, double buttonAY, double buttonASize)
+	public void placeButtonA(int _buttonAX, int _buttonAY, int _buttonARad)
 	{
-		this.buttonAX = buttonAX;
-		this.buttonAY = buttonAY;
-		this.buttonASize = buttonASize / 2;
+		this.buttonAX = _buttonAX;
+		this.buttonAY = _buttonAY;
+		this.buttonARad = _buttonARad;		
 	}
 	
-	public void placeButtonB(double buttonBX, double buttonBY, double buttonBSize)
+	public void placeButtonB(int _buttonBX, int _buttonBY, int _buttonBRad)
 	{
-		this.buttonBX = buttonBX;
-		this.buttonBY = buttonBY;
-		this.buttonBSize = buttonBSize / 2;
+		this.buttonBX = _buttonBX;
+		this.buttonBY = _buttonBY;
+		this.buttonBRad = _buttonBRad;
 	}
 	
-	public boolean isEnabledPad()
-	{
-		return padEnabled;
+	
+	public boolean isPadTouched(int _x, int _y)
+	{		
+		if ((Math.abs(_x - padX) >= padRad) ||
+			(Math.abs(_y - padY) >= padRad))
+			return false;
+		return true;
 	}
 	
-	public void enablePad()
+	public boolean isButtonATouched(int _x, int _y)
 	{
-		padEnabled = true;
+		if ((Math.abs(_x - buttonAX) >= buttonARad) ||
+			(Math.abs(_y - buttonAY) >= buttonARad))
+			return false;
+		return true;
 	}
 	
-	public void disablePad()
+	public boolean isButtonBTouched(int _x, int _y)
 	{
-		padEnabled = false;
+		if ((Math.abs(_x - buttonBX) >= buttonBRad) ||
+			(Math.abs(_y - buttonBY) >= buttonBRad))
+			return false;
+		return true;
 	}
 	
-	public boolean isEnabledButtonA()
-	{
-		return buttonAEnabled;
-	}
-	
-	public void enableButtonA()
-	{
-		buttonAEnabled = true;
-	}
-	
-	public void disableButtonA()
-	{
-		buttonAEnabled = false;
-	}
-	
-	public boolean isEnabledButtonB()
-	{
-		return buttonBEnabled;
-	}
-	
-	public void enableButtonB()
-	{
-		buttonBEnabled = true;
-	}
-	
-	public void disableButtonB()
-	{
-		buttonBEnabled = false;
-	}
-	
-	public int getButtonTouched()
-	{
-		if (!Gdx.input.isTouched()) return -1;
-		if (padEnabled && isPadTouched()) return 0;
-		if (buttonAEnabled && isButtonATouched()) return 1;
-		if (buttonBEnabled && isButtonBTouched()) return 0;
-		return -1;
-	}
-	
-	public boolean isPadTouched()
-	{
-		double x, y;
+	@Override
+	public boolean keyDown(int arg0) {
+		// TODO Auto-generated method stub
 		
-		if (!(padEnabled && Gdx.input.isTouched())) return false;
-		if (Gdx.input.getX() < padX)
-			x = padX - Gdx.input.getX();
-		else
-			x = Gdx.input.getX() - padX;
-		if (Gdx.input.getY() < padY)
-			y = padY - Gdx.input.getY();
-		else
-			y = Gdx.input.getY() - padY;
-		return x * x + y * y <= padSize;
+		
+		return false;
 	}
-	
-	public boolean isButtonATouched()
-	{
-		if (!(buttonAEnabled && Gdx.input.isTouched())) return false;
-		return Gdx.input.getX() >= buttonAX - buttonASize && Gdx.input.getX() <= buttonAX + buttonASize && Gdx.input.getY() >= buttonAY - buttonASize && Gdx.input.getY() <= buttonAY + buttonASize;
+
+	@Override
+	public boolean keyTyped(char arg0) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
-	public boolean isButtonBTouched()
-	{
-		if (!(buttonBEnabled && Gdx.input.isTouched())) return false;
-		return Gdx.input.getX() >= buttonBX - buttonBSize && Gdx.input.getX() <= buttonBX + buttonBSize && Gdx.input.getY() >= buttonBY - buttonBSize && Gdx.input.getY() <= buttonBY + buttonBSize;
+
+	@Override
+	public boolean keyUp(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
-	public double getPadX()
-	{
-		return Gdx.input.getX() - padX;
+
+	@Override
+	public boolean scrolled(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
-	public double getPadY()
-	{
-		return padY - Gdx.input.getY();
+
+	@Override
+	public boolean touchDown(int _x, int _y, int _p, int arg3) {
+		boolean aux = false;
+		
+		if ((pressed[A] == NOTPRESSED) && isButtonATouched(_x, _y))
+		{
+			Gdx.app.log("Button touch'd down", "A");
+			pressed[A] = _p;
+			aux = true;
+		}
+		
+		if ((pressed[B] == NOTPRESSED) && isButtonBTouched(_x, _y))
+		{
+			Gdx.app.log("Button touch'd down", "B");
+			pressed[B] = _p;
+			aux = true;
+		}
+		
+		if ((pressed[PAD] == NOTPRESSED) && (isPadTouched(_x, _y)))
+		{
+			Gdx.app.log("Button touch'd down", "PAD");
+			pressed[PAD] = _p;
+			aux = true;
+			pressed[UP] 	= _y < (padY + 0.3 * padRad) ? _p : -1;
+			pressed[DOWN] 	= _y > (padY - 0.3 * padRad) ? _p : -1;
+			pressed[RIGHT] 	= _x > (padX + 0.3 * padRad) ? _p : -1;
+			pressed[LEFT]	= _x < (padX - 0.3 * padRad) ? _p : -1;
+		}
+		
+		return aux;
 	}
-	
-	public void drawControl()
-	{
-		//Algún dia esta función dibujara los controles sobre la pantalla
+
+	@Override
+	public boolean touchDragged(int arg0, int arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+		//Test pointer to pressed[]
+		
+		return false;
+	}
+
+	@Override
+	public boolean touchMoved(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		// Not used
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int _x, int _y, int _p, int arg3) {
+		boolean ret = false;
+		
+		//Test pointer to pressed[]
+		for (int i = 0; i < TOTALBUTTONS; i++)
+		{
+			if (pressed[i] == _p)
+			{
+				Gdx.app.log("Button up", ""+(i));
+				pressed[i] = NOTPRESSED;
+				ret = true;
+			}
+		}
+
+		return ret;
 	}
 }
