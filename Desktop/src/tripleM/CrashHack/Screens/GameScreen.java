@@ -89,7 +89,7 @@ public class GameScreen implements Screen {
 			float ratio = (_height / 3) / Art.sizeBigPad;
 			int rad = (int) Art.sizeBigPad / 2;
 			
-			Art.bigPad.setPosition(10, 10);
+			Art.bigPad.setPosition(20, 20);
 			Art.smallPad.setPosition(Art.bigPad.getX() + rad, Art.bigPad.getY() + rad);
 			
 			Art.bigPad.setSize(Art.sizeBigPad * ratio, Art.sizeBigPad * ratio);			
@@ -108,8 +108,8 @@ public class GameScreen implements Screen {
 			int wid = (int) (Art.sizeA * ratio);
 			
 			
-			Art.bButton.setPosition(_width - 10 - wid, 10 + wid);
-			Art.aButton.setPosition(_width - 20 - 2 * wid, 10);
+			Art.bButton.setPosition(_width - 20 - wid, 20 + wid);
+			Art.aButton.setPosition(_width - 40 - 2 * wid, 20);
 			
 			Art.bButton.setSize(Art.sizeB * ratio, Art.sizeB * ratio);
 			Art.aButton.setSize(Art.sizeA * ratio, Art.sizeA * ratio);
