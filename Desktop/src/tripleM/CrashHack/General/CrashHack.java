@@ -51,7 +51,7 @@ public class CrashHack implements ApplicationListener{
 
 	@Override
 	public void resize(int arg0, int arg1) {
-		// TODO Auto-generated method stub
+		pantalla.resize(arg0, arg1);
 		
 	}
 
