@@ -14,13 +14,66 @@ public class Art {
 	public static float sizeSmallPad = 32f;
 	
 	public static Sprite aButton;
-	public static float[] colorA = {0,1,0,1};
+	private static float[] colorA = {0,1,0,1};
 	public static float sizeA = 32f;
+	private static boolean pressedA;
 	
 	public static Sprite bButton;
-	public static float[] colorB = {1,0,0,1};
+	private static float[] colorB = {1,0,0,1};
 	public static float sizeB = 32f;
+	private static boolean pressedB;
 	
+	public static void pressA() {
+		if (pressedA) return;
+		float h = aButton.getHeight();
+		float w = aButton.getWidth();
+		float x = aButton.getX();
+		float y = aButton.getY();
+		aButton 	= new Sprite (allControls, 128, 32, (int) sizeA, (int) sizeA);
+		aButton.setColor(colorA[0],colorA[1],colorA[2],colorA[3]);
+		aButton.setSize(w, h);
+		aButton.setPosition(x, y);
+		pressedA = true;
+	}
+	
+	public static void unpressA() {
+		if (! pressedA) return;
+		float h = aButton.getHeight();
+		float w = aButton.getWidth();
+		float x = aButton.getX();
+		float y = aButton.getY();
+		aButton 	= new Sprite (allControls, 128, 0, (int) sizeA, (int) sizeA);
+		aButton.setColor(colorA[0],colorA[1],colorA[2],colorA[3]);
+		aButton.setSize(w, h);
+		aButton.setPosition(x, y);
+		pressedA = false;
+	}
+	
+	public static void pressB() {
+		if (pressedB) return;
+		float h = bButton.getHeight();
+		float w = bButton.getWidth();
+		float x = bButton.getX();
+		float y = bButton.getY();
+		bButton 	= new Sprite (allControls, 192, 32, (int) sizeB, (int) sizeB);
+		bButton.setColor(colorB[0],colorB[1],colorB[2],colorB[3]);
+		bButton.setSize(w, h);
+		bButton.setPosition(x, y);
+		pressedB = true;
+	}
+	
+	public static void unpressB() {
+		if (! pressedB) return;
+		float h = bButton.getHeight();
+		float w = bButton.getWidth();
+		float x = bButton.getX();
+		float y = bButton.getY();
+		bButton 	= new Sprite (allControls, 192, 0, (int) sizeB, (int) sizeB);
+		bButton.setColor(colorB[0],colorB[1],colorB[2],colorB[3]);
+		bButton.setSize(w, h);
+		bButton.setPosition(x, y);
+		pressedB = false;
+	}
 	
 	public static void load () {
 		allControls = new Texture (Gdx.files.internal("res/hud_opt2.png"));
@@ -32,9 +85,11 @@ public class Art {
 		
 		aButton 	= new Sprite (allControls, 128, 0, (int) sizeA, (int) sizeA);		
 		aButton.setColor(colorA[0],colorA[1],colorA[2],colorA[3]);
+		pressedA = false;
 		
 		bButton 	= new Sprite (allControls, 192, 0, (int) sizeB, (int) sizeB);
 		bButton.setColor(colorB[0],colorB[1],colorB[2],colorB[3]);
+		pressedB = false;
 		
 	}
 	

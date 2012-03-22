@@ -59,15 +59,13 @@ public class GameScreen implements Screen {
 			}
 			Art.smallPad.setPosition(x, y);
 			
-			float trans = Art.colorA[3];
 			if (control.pressed[Control.A] != Control.NOTPRESSED)
-				trans = 0.5f;
-			Art.aButton.setColor(Art.colorA[0],Art.colorA[1],Art.colorA[2],trans);
+				Art.pressA();
+			else Art.unpressA();
 			
-			trans = Art.colorB[3];
 			if (control.pressed[Control.B] != Control.NOTPRESSED)
-				trans = 0.5f;
-			Art.bButton.setColor(Art.colorB[0],Art.colorB[1],Art.colorB[2],trans);
+				Art.pressB();
+			else Art.unpressB();
 			
 
 			Art.smallPad.draw(spriteBatch);
