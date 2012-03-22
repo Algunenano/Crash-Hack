@@ -14,19 +14,14 @@ public class Art {
 	
 	public static void load () {
 		allControls = new Texture (Gdx.files.internal("res/hud.png"));
-		
 		bigPad 		= new Sprite (allControls, 0, 0, 64, 64);
-		bigPad.setPosition(10, 10);
-		
 		smallPad 	= new Sprite (allControls, 64, 0, 32, 32);
-		smallPad.setPosition(26,26);
 		
-		aButton 	= new Sprite (allControls, 128, 0, 32, 32);
-		aButton.setPosition(CrashHack.GAME_WIDTH - 84, 10);
+		
+		aButton 	= new Sprite (allControls, 128, 0, 32, 32);		
 		aButton.setColor(0f, 1f, 0f, 1f);
 		
 		bButton 	= new Sprite (allControls, 192, 0, 32, 32);
-		bButton.setPosition(CrashHack.GAME_WIDTH - 42, 42);
 		bButton.setColor(1f, 0f, 0f, 1f);
 		
 	}

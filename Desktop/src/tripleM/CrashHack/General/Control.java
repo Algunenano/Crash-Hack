@@ -113,30 +113,31 @@ public class Control implements InputProcessor
 	@Override
 	public boolean touchDown(int _x, int _y, int _p, int arg3) {
 		boolean aux = false;
+		Gdx.app.log("Control", ("Pressed " + _x + " " + _y));
 		
 		if ((pressed[A] == NOTPRESSED) && isButtonATouched(_x, _y))
 		{
-			Gdx.app.log("Button touch'd down", "A");
+			Gdx.app.log("Control", "Pressed A ");
 			pressed[A] = _p;
 			aux = true;
 		}
 		
 		if ((pressed[B] == NOTPRESSED) && isButtonBTouched(_x, _y))
 		{
-			Gdx.app.log("Button touch'd down", "B");
+			Gdx.app.log("Control", "Pressed B");
 			pressed[B] = _p;
 			aux = true;
 		}
 		
 		if ((pressed[PAD] == NOTPRESSED) && (isPadTouched(_x, _y)))
 		{
-			Gdx.app.log("Button touch'd down", "PAD");
+			Gdx.app.log("Control", "Pressed PAD");
 			pressed[PAD] = _p;
 			aux = true;
-			pressed[UP] 	= _y < (padY + 0.3 * padRad) ? _p : -1;
-			pressed[DOWN] 	= _y > (padY - 0.3 * padRad) ? _p : -1;
-			pressed[RIGHT] 	= _x > (padX + 0.3 * padRad) ? _p : -1;
-			pressed[LEFT]	= _x < (padX - 0.3 * padRad) ? _p : -1;
+			pressed[UP] 	= (_y < (padY - 0.3 * padRad)) ? _p : -1;
+			pressed[DOWN] 	= (_y > (padY + 0.3 * padRad)) ? _p : -1;
+			pressed[RIGHT] 	= (_x > (padX + 0.3 * padRad)) ? _p : -1;
+			pressed[LEFT]	= (_x < (padX - 0.3 * padRad)) ? _p : -1;
 		}
 		
 		return aux;
@@ -167,7 +168,7 @@ public class Control implements InputProcessor
 		{
 			if (pressed[i] == _p)
 			{
-				Gdx.app.log("Button up", ""+(i));
+				Gdx.app.log("Control", "Up "+(i) + " " + (_p));
 				pressed[i] = NOTPRESSED;
 				ret = true;
 			}
