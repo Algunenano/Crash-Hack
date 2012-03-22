@@ -23,9 +23,11 @@ public class Art {
 	
 	
 	public static void load () {
-		allControls = new Texture (Gdx.files.internal("res/hud.png"));
+		allControls = new Texture (Gdx.files.internal("res/hud_opt2.png"));
 		bigPad 		= new Sprite (allControls, 0, 0, (int) sizeBigPad, (int) sizeBigPad);
 		smallPad 	= new Sprite (allControls, 64, 0, (int) sizeSmallPad, (int) sizeSmallPad);
+		bigPad.setColor(0.85f, 0.85f, 0.85f, 0.4f);
+		smallPad.setColor(0.9f, 0.9f, 0.9f, 1);
 		
 		
 		aButton 	= new Sprite (allControls, 128, 0, (int) sizeA, (int) sizeA);		
