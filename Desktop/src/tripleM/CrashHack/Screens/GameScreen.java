@@ -13,9 +13,8 @@ public class GameScreen implements Screen {
 
 	
 	public GameScreen(Control _c) {
-		spriteBatch = new SpriteBatch();
 		control = _c;
-		//this.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());	
+		this.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());	
 
 	}
 	
@@ -80,13 +79,18 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void resize(int _width, int _height) {
-		Gdx.app.log("Control", "Resize: Art doesn't work");
+
+		spriteBatch = new SpriteBatch();
+		
 //		if (Gdx.app.getType() == ApplicationType.Android) {
 		//Set up button controls
 		
 			// PAD
 			
 			float ratio = (_height / 3) / Art.sizeBigPad;
+			if (ratio > 2) ratio = 2;
+			if (ratio < 1) ratio = 1;
+			
 			int rad = (int) Art.sizeBigPad / 2;
 			
 			Art.bigPad.setPosition(20, 20);
@@ -104,6 +108,10 @@ public class GameScreen implements Screen {
 			
 			// A and B buttons
 			ratio = (_height / 6) / Art.sizeA;
+			if (ratio > 2) ratio = 2;
+			if (ratio < 1) ratio = 1;
+			
+			
 			rad = (int) Art.sizeA / 2;
 			int wid = (int) (Art.sizeA * ratio);
 			
