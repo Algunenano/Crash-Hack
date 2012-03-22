@@ -144,12 +144,22 @@ public class Control implements InputProcessor
 	}
 
 	@Override
-	public boolean touchDragged(int arg0, int arg1, int arg2) {
-		// TODO Auto-generated method stub
+	public boolean touchDragged(int _x, int _y, int _p) {
+		boolean aux = false;
 		
-		//Test pointer to pressed[]
+		// Check (and update) the PAD in case of dragging
+		// We don't care about other buttons being dragged
+		if (_p == pressed[PAD])
+		{
+			Gdx.app.log("Control", "Dragged PAD");
+			aux = true;
+			pressed[UP] 	= (_y < (padY - 0.3 * padRad)) ? _p : -1;
+			pressed[DOWN] 	= (_y > (padY + 0.3 * padRad)) ? _p : -1;
+			pressed[RIGHT] 	= (_x > (padX + 0.3 * padRad)) ? _p : -1;
+			pressed[LEFT]	= (_x < (padX - 0.3 * padRad)) ? _p : -1;
+		}
 		
-		return false;
+		return aux;
 	}
 
 	@Override
