@@ -268,7 +268,7 @@ public class Control implements InputProcessor, Screen {
 			
 			int rad = (int) Art.sizeBigPad / 2;
 			
-			Art.bigPad.setPosition(20, 20);
+			Art.bigPad.setPosition(40, 40);
 			Art.smallPad.setPosition(Art.bigPad.getX() + rad, Art.bigPad.getY() + rad);
 			
 			Art.bigPad.setSize(Art.sizeBigPad * ratio, Art.sizeBigPad * ratio);			

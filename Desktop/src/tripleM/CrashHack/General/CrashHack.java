@@ -45,7 +45,7 @@ public class CrashHack implements ApplicationListener{
 
 	@Override
 	public void render() {
-		Gdx.gl.glClearColor(0,0,0,0);
+		Gdx.gl.glClearColor(0,1,1,0);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		pantalla.render(0);
 		
