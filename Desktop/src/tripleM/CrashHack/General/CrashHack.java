@@ -20,8 +20,9 @@ public class CrashHack implements ApplicationListener{
 	
 	@Override
 	public void create() {
+		Setup.load();
 		Art.load();
-		Sound.load();		
+		Sound.load();
 		
 		ctls = new Control();
 		Gdx.input.setInputProcessor(ctls);
