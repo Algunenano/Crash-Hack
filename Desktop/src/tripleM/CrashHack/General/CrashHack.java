@@ -33,6 +33,7 @@ public class CrashHack implements ApplicationListener{
 	@Override
 	public void dispose() {
 		pantalla.dispose();
+		ctls.dispose();
 		
 	}
 
