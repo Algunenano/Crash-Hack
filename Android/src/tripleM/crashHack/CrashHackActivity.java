@@ -2,7 +2,6 @@ package tripleM.crashHack;
 
 import tripleM.CrashHack.General.CrashHack;
 import android.os.Bundle;
-
 import com.badlogic.gdx.backends.android.AndroidApplication;
 
 public class CrashHackActivity extends AndroidApplication {
@@ -10,6 +9,9 @@ public class CrashHackActivity extends AndroidApplication {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initialize(new CrashHack(), false);
+        ControlAndroid ca = new ControlAndroid();
+        initialize(new CrashHack(ca), false);
+        this.graphics.getView().setOnTouchListener(ca);
+        
     }
 }

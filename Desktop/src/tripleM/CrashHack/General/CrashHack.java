@@ -5,35 +5,41 @@ import tripleM.CrashHack.Screens.GameScreen;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL10;
-
-import tripleM.CrashHack.General.Control;
 
 
 public class CrashHack implements ApplicationListener{
-	public static final int GAME_WIDTH = 480;
-	public static final int GAME_HEIGHT = 320;
-	
+	FPSLogger fps;
 	private Screen pantalla;
-	private Control ctls;
+	private Control ctrl;
 	
+	public CrashHack(Control _ct) {
+		ctrl = _ct;
+	}
+	
+	/**
+	 * Control register.
+	 * ONLY FOR DESKTOP VERSION
+	 */
+	public void desktop_regControl () {
+		Gdx.input.setInputProcessor((ControlDesktop) ctrl);
+	}
 	
 	@Override
 	public void create() {
 		Setup.load();
 		Art.load();
 		Sound.load();
+		fps = new FPSLogger();
 		
-		ctls = new Control();
-		Gdx.input.setInputProcessor(ctls);
-		
-		pantalla = new GameScreen(ctls);
+		pantalla = new GameScreen(ctrl);
 	}
 
 	@Override
 	public void dispose() {
 		pantalla.dispose();
-		ctls.dispose();
+		ctrl.dispose();
 		
 	}
 
@@ -48,6 +54,7 @@ public class CrashHack implements ApplicationListener{
 		Gdx.gl.glClearColor(0,1,1,0);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		pantalla.render(0);
+//		fps.log();
 		
 	}
 
