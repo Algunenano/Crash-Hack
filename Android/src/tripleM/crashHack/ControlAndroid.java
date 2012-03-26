@@ -82,6 +82,9 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		return false;
 	}
 
+	/* Nota: Tratamos el toque como un círculo y no como una elipse por simpleza
+	 * y porque mi móvil lo pasa como un círculo y no tengo forma de testearlo
+	 */
 	public boolean touchDown(int _x, int _y, int _p, MotionEvent _event) {
 		boolean aux = false;
 		
@@ -232,7 +235,7 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		placePad(
 				(int) (Art.bigPad.getX() + rad),
 				(int) (_height - Art.bigPad.getY() - rad),
-				(int) (rad * 1.1)); //Added 10% error margin
+				rad);
 	
 		
 		// A and B buttons
@@ -256,14 +259,14 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		placeButtonA(
 				(int) Art.aButton.getX() + rad, 
 				(int) _height - (int) Art.aButton.getY() - rad, 
-				(int) (rad * 1.1));
+				rad);
 		
 		
 
 		placeButtonB(
 				(int) Art.bButton.getX() + rad,
 			 	(int) _height - (int) Art.bButton.getY() - rad, 
-			 	(int) (rad * 1.1));
+			 	rad);
 			
 		
 	}
