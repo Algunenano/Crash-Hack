@@ -248,8 +248,8 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		int wid = (int) (Art.sizeA * ratio);
 		
 		
-		Art.bButton.setPosition(_width - 20 - wid, 20 + wid);
-		Art.aButton.setPosition(_width - 40 - 2 * wid, 20);
+		Art.bButton.setPosition(_width - 30 - wid, 20 + wid);
+		Art.aButton.setPosition(_width - 60 - 2 * wid, 20);
 		
 		Art.bButton.setSize(Art.sizeB * ratio, Art.sizeB * ratio);
 		Art.aButton.setSize(Art.sizeA * ratio, Art.sizeA * ratio);
