@@ -1,12 +1,13 @@
 package tripleM.crashHack;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import tripleM.CrashHack.General.Art;
 import tripleM.CrashHack.General.Control;
 import android.view.*;
 
+/* Notice we don't use a ellipse as touch are because all the devices tested
+ * doesn't support it (and return a circle instead)
+ */
 public class ControlAndroid implements Control, View.OnTouchListener {
 
 	private SpriteBatch spriteBatch; //Initialize in resize()
@@ -14,6 +15,10 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 	
 	private final int MAXIMUM_RATIO = 2;
 	private final int MINIMUM_RATIO = 1;
+	private final int PAD_FRACTION = 3; //Fraction of the screen for the pad
+	private final int AB_FRACTION = 6;
+	private final int BUTTONS_MARGIN = 5; // Margin (in pixels) added around the buttons to detect touch
+	
 	public static final int NOTPRESSED = -1;
 
 	private int padX;
@@ -82,15 +87,10 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		return false;
 	}
 
-	/* Nota: Tratamos el toque como un círculo y no como una elipse por simpleza
-	 * y porque mi móvil lo pasa como un círculo y no tengo forma de testearlo
-	 */
 	public boolean touchDown(int _x, int _y, int _p, MotionEvent _event) {
 		boolean aux = false;
 		
-		//Gdx.app.log("Touch down", "x: " + _x + ". y: " + _y + ". alpha: " + _event.getOrientation(_p) + ". mayor: " + _event.getToolMajor(_p) +_p + ". minor: " + _event.getToolMinor(_p));
-
-		int rad = (int) _event.getToolMajor(_p);
+		int rad = (int) _event.getTouchMajor(_p);
 		if ((buttonPressed[A] == NOTPRESSED) && isButtonATouched(_x, _y, rad)) {
 			buttonPressed[A] = _p;
 			aux = true;
@@ -216,16 +216,16 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 
 		spriteBatch = new SpriteBatch();
 		
-		
 		// PAD
 		
-		float ratio = (_height / 3) / Art.sizeBigPad;
+		float ratio = (_height / PAD_FRACTION) / Art.sizeBigPad;
 		if (ratio > MAXIMUM_RATIO) ratio = MAXIMUM_RATIO;
-		if (ratio < MINIMUM_RATIO) ratio = MINIMUM_RATIO;
+		else
+			if (ratio < MINIMUM_RATIO) ratio = MINIMUM_RATIO;
 		
 		int rad = (int) Art.sizeBigPad / 2;
 		
-		Art.bigPad.setPosition(40, 40);
+		Art.bigPad.setPosition(10 + rad, 10 + rad);
 		Art.smallPad.setPosition(Art.bigPad.getX() + rad, Art.bigPad.getY() + rad);
 		
 		Art.bigPad.setSize(Art.sizeBigPad * ratio, Art.sizeBigPad * ratio);			
@@ -234,12 +234,12 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		rad *= ratio;
 		placePad(
 				(int) (Art.bigPad.getX() + rad),
-				(int) (_height - Art.bigPad.getY() - rad),
-				rad);
+				_height - (int) (Art.bigPad.getY() + rad),
+				(int) (rad * Math.sqrt(2))); //Complete circle + Error margin
 	
 		
 		// A and B buttons
-		ratio = (_height / 6) / Art.sizeA;
+		ratio = (_height / AB_FRACTION) / Art.sizeA;
 		if (ratio > MAXIMUM_RATIO) ratio = MAXIMUM_RATIO;
 		if (ratio < MINIMUM_RATIO) ratio = MINIMUM_RATIO;
 		
@@ -249,7 +249,7 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		
 		
 		Art.bButton.setPosition(_width - 30 - wid, 20 + wid);
-		Art.aButton.setPosition(_width - 60 - 2 * wid, 20);
+		Art.aButton.setPosition(_width - 90 - 2 * wid, 20);
 		
 		Art.bButton.setSize(Art.sizeB * ratio, Art.sizeB * ratio);
 		Art.aButton.setSize(Art.sizeA * ratio, Art.sizeA * ratio);
@@ -257,16 +257,16 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		rad *= ratio;
 		
 		placeButtonA(
-				(int) Art.aButton.getX() + rad, 
-				(int) _height - (int) Art.aButton.getY() - rad, 
-				rad);
+				(int) (Art.aButton.getX() + rad), 
+				_height - (int) (Art.aButton.getY() + rad), 
+				(int) (rad * Math.sqrt(2)) + BUTTONS_MARGIN);
 		
 		
 
 		placeButtonB(
-				(int) Art.bButton.getX() + rad,
-			 	(int) _height - (int) Art.bButton.getY() - rad, 
-			 	rad);
+				(int) (Art.bButton.getX() + rad),
+			 	_height - (int) (Art.bButton.getY() + rad), 
+			 	(int) (rad * Math.sqrt(2)) + BUTTONS_MARGIN);
 			
 		
 	}
