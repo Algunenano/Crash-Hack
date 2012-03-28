@@ -10,8 +10,10 @@ public class CrashHackActivity extends AndroidApplication {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ControlAndroid ca = new ControlAndroid();
-        initialize(new CrashHack(ca), false);
+        CrashHack ch = new CrashHack(ca);
+        initialize(ch, false);
         this.graphics.getView().setOnTouchListener(ca);
+        
         
     }
 }

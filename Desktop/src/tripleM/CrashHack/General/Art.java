@@ -89,8 +89,7 @@ public class Art {
 		
 		bButton 	= new Sprite (allControls, 192, 0, (int) sizeB, (int) sizeB);
 		bButton.setColor(colorB[0],colorB[1],colorB[2],colorB[3]);
-		pressedB = false;
-		
+		pressedB = false;		
 	}
 	
 	

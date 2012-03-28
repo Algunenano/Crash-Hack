@@ -45,7 +45,7 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		for (int i = 0; i < TOTALBUTTONS; i++)
 		{
 			buttonPressed[i] = NOTPRESSED;
-			actions[i] = false;
+			Control.actions[i] = false;
 		}
 		
 		APILEVEL = true;
@@ -138,6 +138,7 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 
 	public boolean touchDown(int _x, int _y, int _p, MotionEvent _event) {
 		boolean aux = false;
+		Control.actions[ANYTHING] = true;
 		
 		if ((buttonPressed[A] == NOTPRESSED) && isButtonATouched(_x, _y, _p, _event)) {
 			buttonPressed[A] = _p;
@@ -163,6 +164,8 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 
 	public boolean touchDragged(int _x, int _y, int _p, MotionEvent _event) {
 		boolean aux = false;
+		
+		Control.actions[ANYTHING] = true;
 		
 		// Check (and update) the PAD in case of dragging
 		if ((_p == buttonPressed[PAD]) || (isPadTouched(_x, _y, _p, _event))) {
@@ -196,6 +199,8 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 
 	public boolean touchUp(int _x, int _y, int _p, MotionEvent _event) {
 		boolean ret = false;
+		
+		Control.actions[ANYTHING] = true;
 
 		// Test pointer to pressed[]
 		for (int i = 0; i < TOTALBUTTONS; i++) {
@@ -211,7 +216,7 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 	@Override
 	public void render(float delta) {
 		for (int i = 0; i < TOTALBUTTONS; i++)
-			actions[i] = (buttonPressed[i] != NOTPRESSED);
+			Control.actions[i] = (buttonPressed[i] != NOTPRESSED);
 		
 		
 		spriteBatch.begin();
@@ -225,12 +230,12 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		int up = 0;
 		int right = 0;
 		
-		if (actions[PAD])
+		if (Control.actions[PAD])
 		{			
-			up += actions[UP] 		? sr : 0;
-			up -= actions[DOWN] 	? sr : 0;
-			right += actions[RIGHT] ? sr : 0;
-			right -= actions[LEFT]	? sr : 0;
+			up += Control.actions[UP] 		? sr : 0;
+			up -= Control.actions[DOWN] 	? sr : 0;
+			right += Control.actions[RIGHT] ? sr : 0;
+			right -= Control.actions[LEFT]	? sr : 0;
 			
 			if ((up != 0) && (right != 0))
 			{
@@ -240,11 +245,11 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		}
 		Art.smallPad.setPosition(x + right, y + up);
 		
-		if (actions[A])
+		if (Control.actions[A])
 			Art.pressA();
 		else Art.unpressA();
 		
-		if (actions[B])
+		if (Control.actions[B])
 			Art.pressB();
 		else Art.unpressB();
 		
@@ -254,6 +259,8 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		Art.bButton.draw(spriteBatch);
 			
 		spriteBatch.end();
+		
+		Control.actions[ANYTHING] = false;
 		
 	}
 

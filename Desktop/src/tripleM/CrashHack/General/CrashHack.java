@@ -1,6 +1,6 @@
 package tripleM.CrashHack.General;
 
-import tripleM.CrashHack.Screens.GameScreen;
+import tripleM.CrashHack.Screens.TitleScreen;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -11,8 +11,9 @@ import com.badlogic.gdx.graphics.GL10;
 
 public class CrashHack implements ApplicationListener{
 	FPSLogger fps;
-	private Screen pantalla;
-	private Control ctrl;
+	private static Screen pantalla;
+	private static Control ctrl;
+	private static boolean disposeControl = false;
 	
 	public CrashHack(Control _ct) {
 		ctrl = _ct;
@@ -22,8 +23,14 @@ public class CrashHack implements ApplicationListener{
 	 * Control register.
 	 * ONLY FOR DESKTOP VERSION
 	 */
-	public void desktop_regControl () {
+	public static void desktop_regControl () {
 		Gdx.input.setInputProcessor((ControlDesktop) ctrl);
+		disposeControl = true;
+	}
+	
+	public static void setScreen (Screen s) {
+		pantalla.dispose();
+		pantalla = s;
 	}
 	
 	@Override
@@ -32,14 +39,13 @@ public class CrashHack implements ApplicationListener{
 		Art.load();
 		Sound.load();
 		fps = new FPSLogger();
-		
-		pantalla = new GameScreen(ctrl);
+		pantalla = new TitleScreen(ctrl);
 	}
 
 	@Override
 	public void dispose() {
 		pantalla.dispose();
-		ctrl.dispose();
+		if (disposeControl) ctrl.dispose();
 		
 	}
 
@@ -54,7 +60,6 @@ public class CrashHack implements ApplicationListener{
 		Gdx.gl.glClearColor(0,1,1,0);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		pantalla.render(0);
-//		fps.log();
 		
 	}
 

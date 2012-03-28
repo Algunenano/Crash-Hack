@@ -14,8 +14,7 @@ public class GameScreen implements Screen {
 	public GameScreen(Control _c) {
 		spriteBatch = new SpriteBatch();
 		control = _c;
-		this.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());	
-
+		control.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 	
 	@Override
@@ -38,9 +37,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void render(float arg0) {
-		spriteBatch.begin();
 		control.render(arg0);
-		spriteBatch.end();
 	}
 
 	@Override

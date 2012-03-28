@@ -8,7 +8,7 @@ public class ControlDesktop implements Control, InputProcessor {
 	public ControlDesktop() {
 		for (int i = 0; i < TOTALBUTTONS; i++)
 		{
-			actions[i] = false;
+			Control.actions[i] = false;
 		}
 		
 	}
@@ -24,6 +24,8 @@ public class ControlDesktop implements Control, InputProcessor {
 
 	@Override
 	public boolean keyDown(int _key) {
+		Control.actions[ANYTHING] = true;
+		
 		int button = -1;
 		
 		if (_key == Keys.DPAD_UP) button = UP;
@@ -35,7 +37,7 @@ public class ControlDesktop implements Control, InputProcessor {
 		
 		if ((button != -1)) {
 			Gdx.app.log ("Key pressed","" + button);
-			actions[button] = true;
+			Control.actions[button] = true;
 			return true;
 		}
 		return false;
@@ -43,6 +45,8 @@ public class ControlDesktop implements Control, InputProcessor {
 
 	@Override
 	public boolean keyUp(int _key) {
+		Control.actions[ANYTHING] = true;
+		
 		int button = -1;
 		
 		if (_key == Keys.DPAD_UP) button = UP;
@@ -54,7 +58,7 @@ public class ControlDesktop implements Control, InputProcessor {
 		
 		if ((button != -1)) {
 			Gdx.app.log ("Key unpressed","" + button);
-			actions[button] = false;
+			Control.actions[button] = false;
 			return true;
 		}
 		return false;
@@ -62,22 +66,26 @@ public class ControlDesktop implements Control, InputProcessor {
 
 	@Override
 	public boolean keyTyped(char arg0) {
+		Control.actions[ANYTHING] = true;
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int arg0) {
+		Control.actions[ANYTHING] = true;
 		return false;
 	}
 	
 
 	@Override
 	public boolean touchDown(int _x, int _y, int _p, int arg3) {
+		Control.actions[ANYTHING] = true;
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int _x, int _y, int _p) {
+		Control.actions[ANYTHING] = true;
 		return false;
 	}
 
@@ -88,11 +96,13 @@ public class ControlDesktop implements Control, InputProcessor {
 
 	@Override
 	public boolean touchUp(int _x, int _y, int _p, int arg3) {
+		Control.actions[ANYTHING] = true;
 		return false;
 	}
 
 	@Override
 	public void render(float delta) {
+		Control.actions[ANYTHING] = false;
 	}
 
 	@Override
