@@ -1,8 +1,11 @@
 package tripleM.crashHack;
 
+import java.lang.reflect.Method;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import tripleM.CrashHack.General.Art;
 import tripleM.CrashHack.General.Control;
+import android.util.Log;
 import android.view.*;
 
 /* Notice we don't use a ellipse as touch are because all the devices tested
@@ -30,7 +33,11 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 	private int buttonBX;
 	private int buttonBY;
 	private int buttonBRad;
-
+	
+	private static boolean APILEVEL;
+	private static Method getTouchMajor; 
+	private static Method getTouchMinor;
+	private static Method getOrientation;
 	
     public ControlAndroid() {		
         buttonPressed = new int [TOTALBUTTONS];
@@ -40,8 +47,22 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 			buttonPressed[i] = NOTPRESSED;
 			actions[i] = false;
 		}
+		
+		APILEVEL = true;
+		try {
+			Class<?> c[] = new Class[1];
+			c[0] = int.class;
+			
+			getTouchMajor = MotionEvent.class.getMethod("getTouchMajor", c);
+			getTouchMinor = MotionEvent.class.getMethod("getTouchMinor", c);
+			getOrientation  = MotionEvent.class.getMethod("getOrientation", c);			
+		} catch (Exception e) {
+			Log.v("API level", "Incapable of detecting touched areas");
+			APILEVEL = false;
+		}
+		
     }
-
+    
 	public void placePad(int _padX, int _padY, int _padRad) {
 		this.padX = _padX;
 		this.padY = _padY;
@@ -60,29 +81,57 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		this.buttonBRad = _buttonBRad;
 	}
 
-	private boolean isPadTouched(int _x, int _y, int _rad) {
+	private boolean isPadTouched(int _x, int _y, int _p, MotionEvent _event) {
 		//Don't care about radius
 		if ((Math.abs(_x - padX) >= padRad) || (Math.abs(_y - padY) >= padRad))
 			return false;
 		return true;
 	}
 
-	private boolean isButtonATouched(int _x, int _y, int _rad) {
+	private boolean isButtonATouched(int _x, int _y, int _p, MotionEvent _event) {
+		// Not capable of detecting touching areas
+		if (!APILEVEL)
+		{
+			return (Math.abs(_x - buttonAX) <= buttonARad) && (Math.abs(_y - buttonAY) <= buttonARad);
+		}
+		
 		int d = Math.abs(_x - buttonAX);
 		d += Math.abs(_y - buttonAY);
 		d *= Math.sqrt(2);
 		
-		if (d < (buttonARad + _rad))
+		Object o[] = new Object [] {_p};
+		float rad = 0;
+		try {
+			rad = (Float) ControlAndroid.getTouchMajor.invoke(_event, o);
+		} catch (Exception e) {
+			Gdx.app.log("API level", "isButtonATouched " + getTouchMajor.getName());
+		}
+		
+		if (d < (buttonARad + rad))
 				return true;
 		return false;
 	}
 
-	private boolean isButtonBTouched(int _x, int _y, int _rad) {
+	private boolean isButtonBTouched(int _x, int _y, int _p, MotionEvent _event) {
+		// Not capable of detecting touching areas
+		if (!APILEVEL)
+		{
+			return (Math.abs(_x - buttonBX) <= buttonBRad) && (Math.abs(_y - buttonBY) <= buttonBRad);
+		}
+		
 		int d = Math.abs(_x - buttonBX);
 		d += Math.abs(_y - buttonBY);
 		d *= Math.sqrt(2);
 		
-		if (d < (buttonBRad + _rad))
+		Object o[] = new Object [] {_p};
+		float rad = 0;
+		try {
+			rad = (Float) ControlAndroid.getTouchMajor.invoke(_event, o);
+		} catch (Exception e) {
+			Gdx.app.log("API level", "isButtonATouched " + getTouchMajor.getName());
+		}
+		
+		if (d < (buttonBRad + rad))
 				return true;
 		return false;
 	}
@@ -90,18 +139,17 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 	public boolean touchDown(int _x, int _y, int _p, MotionEvent _event) {
 		boolean aux = false;
 		
-		int rad = (int) _event.getTouchMajor(_p);
-		if ((buttonPressed[A] == NOTPRESSED) && isButtonATouched(_x, _y, rad)) {
+		if ((buttonPressed[A] == NOTPRESSED) && isButtonATouched(_x, _y, _p, _event)) {
 			buttonPressed[A] = _p;
 			aux = true;
 		}
 
-		if ((buttonPressed[B] == NOTPRESSED) && isButtonBTouched(_x, _y, rad)) {
+		if ((buttonPressed[B] == NOTPRESSED) && isButtonBTouched(_x, _y, _p, _event)) {
 			buttonPressed[B] = _p;
 			aux = true;
 		}
 
-		if ((buttonPressed[PAD] == NOTPRESSED) && (isPadTouched(_x, _y, rad))) {
+		if ((buttonPressed[PAD] == NOTPRESSED) && (isPadTouched(_x, _y, _p, _event))) {
 			buttonPressed[PAD] = _p;
 			aux = true;
 			buttonPressed[UP] = (_y < (padY - 0.3 * padRad)) ? _p : NOTPRESSED;
@@ -115,11 +163,9 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 
 	public boolean touchDragged(int _x, int _y, int _p, MotionEvent _event) {
 		boolean aux = false;
-
-		int rad = (int) _event.getToolMajor(_p);
 		
 		// Check (and update) the PAD in case of dragging
-		if ((_p == buttonPressed[PAD]) || (isPadTouched(_x, _y, rad))) {
+		if ((_p == buttonPressed[PAD]) || (isPadTouched(_x, _y, _p, _event))) {
 			aux = true;
 			buttonPressed[PAD] = _p;
 			aux = true;
@@ -130,7 +176,7 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		}
 		
 		// Now we do care about the other buttons		
-		if (isButtonATouched(_x, _y, rad)) {
+		if (isButtonATouched(_x, _y, _p, _event)) {
 			buttonPressed[A] = _p;
 			aux = true;
 		} else {
@@ -138,7 +184,7 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		}
 		
 		
-		if (isButtonBTouched(_x, _y, rad)) {
+		if (isButtonBTouched(_x, _y, _p, _event)) {
 			buttonPressed[B] = _p;
 			aux = true;
 		} else {
