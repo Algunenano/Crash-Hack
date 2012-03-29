@@ -101,11 +101,14 @@ public class TitleScreen implements Screen {
 	@Override
 	public void resize(int arg0, int arg1) {
 		spriteBatch = new SpriteBatch();
-		time = 0;
-		x = WIDHT / 2;
-		y = HEIGHT * 3 / 4;
-		w = WIDHT / 2;
-		h = HEIGHT / 4;
+		if (time <= 3 * FPS)
+		{
+			time = 0;
+			x = WIDHT / 2;
+			y = HEIGHT * 3 / 4;
+			w = WIDHT / 2;
+			h = HEIGHT / 4;
+		}
 	}
 
 	@Override
