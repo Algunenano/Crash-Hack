@@ -2,6 +2,7 @@ package tripleM.CrashHack.General;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class Art {
@@ -22,6 +23,8 @@ public class Art {
 	private static float[] colorB = {1,0,0,1};
 	public static float sizeB = 32f;
 	private static boolean pressedB;
+	
+	public static BitmapFont droidFont_32;
 	
 	public static void pressA() {
 		if (pressedA) return;
@@ -89,7 +92,9 @@ public class Art {
 		
 		bButton 	= new Sprite (allControls, 192, 0, (int) sizeB, (int) sizeB);
 		bButton.setColor(colorB[0],colorB[1],colorB[2],colorB[3]);
-		pressedB = false;		
+		pressedB = false;
+		
+		droidFont_32 = new BitmapFont(Gdx.files.internal("res/fonts/droidSansMono_32.fnt"), false);
 	}
 	
 	

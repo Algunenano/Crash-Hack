@@ -1,7 +1,9 @@
 package tripleM.CrashHack.Screens;
 
+import tripleM.CrashHack.General.Art;
 import tripleM.CrashHack.General.Control;
 import tripleM.CrashHack.General.CrashHack;
+import tripleM.CrashHack.General.Strings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -51,6 +53,7 @@ public class TitleScreen implements Screen {
 	@Override
 	public void render(float arg0) {
 		
+		
 		time++;
 		
 		if (time <= (FPS / 2))
@@ -68,12 +71,6 @@ public class TitleScreen implements Screen {
 			w += WIDHT / 8 / FPS;
 			h += HEIGHT / 4 / FPS;
 		}
-		else
-		{
-			//Print "Presiona una tecla / Pulsa pantalla
-			if (Control.actions[Control.ANYTHING] == true)
-				CrashHack.setScreen(new GameScreen(control));			
-		}
 		
 		Sprite s = new Sprite(titleTexture, x, y, w , h);
 		s.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -84,6 +81,16 @@ public class TitleScreen implements Screen {
 		spriteBatch.begin();
 		
 		s.draw(spriteBatch);
+		
+		if (time > 3 * FPS)
+		{
+			/*
+			 * TODO: Dibujar menu (Jugar, Opciones, Salir) + Actuar según dónde pinche
+			 */
+			
+			if (Control.actions[Control.ANYTHING] == true)
+				CrashHack.setScreen(new GameScreen(control));
+		}
 		
 		spriteBatch.end();
 		
