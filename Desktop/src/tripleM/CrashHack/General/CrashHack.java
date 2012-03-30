@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.GL10;
 public class CrashHack implements ApplicationListener{
 	FPSLogger fps;
 	private static Screen pantalla;
-	private static Control ctrl;
+	public static Control ctrl;
 	private static boolean disposeControl = false;
 	
 	public CrashHack(Control _ct) {

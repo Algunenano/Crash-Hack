@@ -12,9 +12,10 @@ public class CrashHackActivity extends AndroidApplication {
         ControlAndroid ca = new ControlAndroid();
         CrashHack ch = new CrashHack(ca);
         initialize(ch, false);
-        this.graphics.getView().setOnTouchListener(ca);
-        this.graphics.getView().setKeepScreenOn(true);
         
+        this.graphics.getView().setOnTouchListener(ca);
+        this.graphics.getView().setKeepScreenOn(true);    
+        ((ControlAndroid) (CrashHack.ctrl)).setupAPI();
         
     }
 }

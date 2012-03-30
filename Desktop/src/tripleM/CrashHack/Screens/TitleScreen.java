@@ -1,6 +1,5 @@
 package tripleM.CrashHack.Screens;
 
-import tripleM.CrashHack.General.Art;
 import tripleM.CrashHack.General.Control;
 import tripleM.CrashHack.General.CrashHack;
 import tripleM.CrashHack.General.Strings;

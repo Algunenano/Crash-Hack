@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import tripleM.CrashHack.General.Art;
 import tripleM.CrashHack.General.Control;
+import tripleM.CrashHack.General.Setup;
 import android.util.Log;
 import android.view.*;
 
@@ -16,11 +17,19 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 	private SpriteBatch spriteBatch; //Initialize in resize()
 	private int[] 		buttonPressed;
 	
-	private final int MAXIMUM_RATIO = 2;
-	private final int MINIMUM_RATIO = 1;
-	private final int PAD_FRACTION = 3; //Fraction of the screen for the pad
-	private final int AB_FRACTION = 6;
+	private final float MAXIMUM_RATIO = 2;
+	private final float MINIMUM_RATIO = 0.5f;
+	private final float PAD_FRACTION_HEIGHT = 3; //Fraction of the screen for the pad
+	private final float PAD_FRACTION_WIDTH = 4;
+	private final int PAD_MARGIN = 10;
+	
+	private final float AB_FRACTION_WIDTH = 3;
+	private final float AB_FRACTION_HEIGHT = 3;
+	private final float AB_MARGIN = 20;
+	
 	private final int BUTTONS_MARGIN = 5; // Margin (in pixels) added around the buttons to detect touch
+	
+	private final int MAX_PRECISION = 5; // If the precision of the device is over this we use the old method. Why? Cause fuck'em. Thats why.
 	
 	public static final int NOTPRESSED = -1;
 
@@ -35,11 +44,13 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 	private int buttonBRad;
 	
 	private static boolean APILEVEL;
+	private static boolean APILEVELtested;
 	private static Method getTouchMajor; 
 	private static Method getTouchMinor;
 	private static Method getOrientation;
 	
     public ControlAndroid() {		
+    	
         buttonPressed = new int [TOTALBUTTONS];
 		
 		for (int i = 0; i < TOTALBUTTONS; i++)
@@ -47,20 +58,31 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 			buttonPressed[i] = NOTPRESSED;
 			Control.actions[i] = false;
 		}
-		
-		APILEVEL = true;
-		try {
-			Class<?> c[] = new Class[1];
-			c[0] = int.class;
-			
-			getTouchMajor = MotionEvent.class.getMethod("getTouchMajor", c);
-			getTouchMinor = MotionEvent.class.getMethod("getTouchMinor", c);
-			getOrientation  = MotionEvent.class.getMethod("getOrientation", c);			
-		} catch (Exception e) {
-			Log.v("API level", "Incapable of detecting touched areas");
+    }
+    
+    public void setupAPI()
+    {
+		if (Setup.getConfigInt(Setup.fatfingers, 0) == 1)
+		{
 			APILEVEL = false;
+			APILEVELtested = true;
 		}
-		
+		else
+		{
+			APILEVEL = true;
+			APILEVELtested = false;
+			try {
+				Class<?> c[] = new Class[1];
+				c[0] = int.class;
+				
+				getTouchMajor = MotionEvent.class.getMethod("getTouchMajor", c);
+				getTouchMinor = MotionEvent.class.getMethod("getTouchMinor", c);
+				getOrientation  = MotionEvent.class.getMethod("getOrientation", c);			
+			} catch (Exception e) {
+				Log.v("API level", "Incapable of detecting touched areas");
+				APILEVEL = false;
+			}
+		}
     }
     
 	public void placePad(int _padX, int _padY, int _padRad) {
@@ -271,20 +293,22 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		
 		// PAD
 		
-		float ratio = (_height / PAD_FRACTION) / Art.sizeBigPad;
+		float ratio = Math.min(
+				(((float) _height / PAD_FRACTION_HEIGHT) / (Art.sizeBigPad + PAD_MARGIN)),
+				(((float) _width / PAD_FRACTION_WIDTH) / (Art.sizeBigPad + PAD_MARGIN)));
+		
 		if (ratio > MAXIMUM_RATIO) ratio = MAXIMUM_RATIO;
-		else
-			if (ratio < MINIMUM_RATIO) ratio = MINIMUM_RATIO;
+		else if (ratio < MINIMUM_RATIO) ratio = MINIMUM_RATIO;
 		
 		int rad = (int) Art.sizeBigPad / 2;
-		
-		Art.bigPad.setPosition(10 + rad, 10 + rad);
+		rad *= ratio;		
+		Art.bigPad.setPosition(PAD_MARGIN, PAD_MARGIN);
 		Art.smallPad.setPosition(Art.bigPad.getX() + rad, Art.bigPad.getY() + rad);
 		
 		Art.bigPad.setSize(Art.sizeBigPad * ratio, Art.sizeBigPad * ratio);			
 		Art.smallPad.setSize(Art.sizeSmallPad * ratio, Art.sizeSmallPad * ratio);
 		
-		rad *= ratio;
+		
 		placePad(
 				(int) (Art.bigPad.getX() + rad),
 				_height - (int) (Art.bigPad.getY() + rad),
@@ -292,22 +316,26 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 	
 		
 		// A and B buttons
-		ratio = (_height / AB_FRACTION) / Art.sizeA;
+		ratio = Math.min(
+				((_height / AB_FRACTION_HEIGHT) / (2 * Art.sizeA + AB_MARGIN)),
+				((_width / AB_FRACTION_WIDTH) / (2 * Art.sizeA + AB_MARGIN + MAX_PRECISION)));
 		if (ratio > MAXIMUM_RATIO) ratio = MAXIMUM_RATIO;
 		if (ratio < MINIMUM_RATIO) ratio = MINIMUM_RATIO;
 		
 		
 		rad = (int) Art.sizeA / 2;
+		rad *= ratio;
+		
 		int wid = (int) (Art.sizeA * ratio);
 		
 		
-		Art.bButton.setPosition(_width - 30 - wid, 20 + wid);
-		Art.aButton.setPosition(_width - 90 - 2 * wid, 20);
+		Art.bButton.setPosition(_width - (wid + AB_MARGIN), AB_MARGIN + wid);
+		Art.aButton.setPosition(_width - (2 * wid + 2 * AB_MARGIN + MAX_PRECISION), AB_MARGIN);
 		
 		Art.bButton.setSize(Art.sizeB * ratio, Art.sizeB * ratio);
 		Art.aButton.setSize(Art.sizeA * ratio, Art.sizeA * ratio);
 		
-		rad *= ratio;
+		
 		
 		placeButtonA(
 				(int) (Art.aButton.getX() + rad), 
@@ -359,7 +387,17 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		int pointerId = event.getPointerId( pointerIndex );
 
 		int x = 0, y = 0;
-
+		
+		if (APILEVEL && ! APILEVELtested)
+		{
+			APILEVELtested = true;
+			if (event.getXPrecision() > MAX_PRECISION)
+			{
+				APILEVEL = false;
+				Gdx.app.log("Precision", "Yours sucks. So we use old method instead");
+			}				
+		}
+		
 		switch( action )
 		{
 			case MotionEvent.ACTION_DOWN:

@@ -9,9 +9,11 @@ import com.badlogic.gdx.files.FileHandle;
 
 public class Setup {
 	private static final String PROPERTIES_FILE = "data/CrashHack.properties";
-	private static Properties properties;
+	private static Properties properties = null;
+	public static final String fatfingers = "fatfingers";
 	
 	public static void load () {
+		if (properties != null) return;
 		properties = new Properties();
 		FileHandle fh = Gdx.files.internal(PROPERTIES_FILE);
 		InputStream inStream = fh.read();
@@ -26,6 +28,7 @@ public class Setup {
 	
 	public static int getConfigInt (String _property, int _fallback)
 	{
+		if (properties == null) Setup.load();
 		String ret = properties.getProperty(_property);
 		if (ret == null) return _fallback;
 		return Integer.parseInt(ret);
@@ -33,6 +36,7 @@ public class Setup {
 	
 	public static float getConfigFloat (String _property, float _fallback)
 	{
+		if (properties == null) Setup.load();
 		String ret = properties.getProperty(_property);
 		if (ret == null) return _fallback;
 		return Float.parseFloat(ret);
@@ -40,6 +44,7 @@ public class Setup {
 	
 	public static String getConfigString (String _property, String _fallback)
 	{
+		if (properties == null) Setup.load();
 		String ret = properties.getProperty(_property);
 		if (ret == null) return _fallback;
 		return ret;

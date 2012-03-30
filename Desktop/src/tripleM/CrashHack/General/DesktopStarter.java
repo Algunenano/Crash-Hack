@@ -19,7 +19,7 @@ public class DesktopStarter {
 				GAME_HEIGHT,
 				false);
 		
-		ch.desktop_regControl();
+		CrashHack.desktop_regControl();
 		
 	}
 
