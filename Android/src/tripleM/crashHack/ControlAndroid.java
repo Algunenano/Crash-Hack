@@ -46,8 +46,8 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 	private static boolean APILEVEL;
 	private static boolean APILEVELtested;
 	private static Method getTouchMajor; 
-	private static Method getTouchMinor;
-	private static Method getOrientation;
+//	private static Method getTouchMinor;
+//	private static Method getOrientation;
 	
     public ControlAndroid() {		
     	
@@ -76,8 +76,8 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 				c[0] = int.class;
 				
 				getTouchMajor = MotionEvent.class.getMethod("getTouchMajor", c);
-				getTouchMinor = MotionEvent.class.getMethod("getTouchMinor", c);
-				getOrientation  = MotionEvent.class.getMethod("getOrientation", c);			
+//				getTouchMinor = MotionEvent.class.getMethod("getTouchMinor", c);
+//				getOrientation  = MotionEvent.class.getMethod("getOrientation", c);			
 			} catch (Exception e) {
 				Log.v("API level", "Incapable of detecting touched areas");
 				APILEVEL = false;
@@ -193,7 +193,6 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 		if ((_p == buttonPressed[PAD]) || (isPadTouched(_x, _y, _p, _event))) {
 			aux = true;
 			buttonPressed[PAD] = _p;
-			aux = true;
 			buttonPressed[UP] = (_y < (padY - 0.3 * padRad)) ? _p : NOTPRESSED;
 			buttonPressed[DOWN] = (_y > (padY + 0.3 * padRad)) ? _p : NOTPRESSED;
 			buttonPressed[RIGHT] = (_x > (padX + 0.3 * padRad)) ? _p : NOTPRESSED;
@@ -205,7 +204,8 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 			buttonPressed[A] = _p;
 			aux = true;
 		} else {
-			buttonPressed[A] = NOTPRESSED;
+			if (buttonPressed[A] == _p)
+				buttonPressed[A] = NOTPRESSED;
 		}
 		
 		
@@ -213,7 +213,8 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 			buttonPressed[B] = _p;
 			aux = true;
 		} else {
-			buttonPressed[B] = NOTPRESSED;
+			if (buttonPressed[B] == _p)
+				buttonPressed[B] = NOTPRESSED;
 		}
 
 		return aux;
