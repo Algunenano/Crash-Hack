@@ -19,6 +19,7 @@ public interface Control extends Screen {
 	public void placePad(int _padX, int _padY, int _padRad);
 	public void placeButtonA(int _buttonAX, int _buttonAY, int _buttonARad);
 	public void placeButtonB(int _buttonBX, int _buttonBY, int _buttonBRad);
+	public void loadArt();
 	
 	
 }

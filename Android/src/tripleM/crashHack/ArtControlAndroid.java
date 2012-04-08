@@ -1,32 +1,32 @@
-package tripleM.CrashHack.General;
+package tripleM.crashHack;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
-public class Art {
+public class ArtControlAndroid {
 
-	public static Texture allControls;
-	public static Sprite bigPad;
-	public static float sizeBigPad = 64f;
+	public Texture allControls;
+	public Sprite bigPad;
+	public float sizeBigPad = 64f;
 	
-	public static Sprite smallPad;
-	public static float sizeSmallPad = 32f;
+	public Sprite smallPad;
+	public float sizeSmallPad = 32f;
 	
-	public static Sprite aButton;
-	private static float[] colorA = {0,1,0,1};
-	public static float sizeA = 32f;
-	private static boolean pressedA;
+	public Sprite aButton;
+	private float[] colorA = {0,1,0,1};
+	public float sizeA = 32f;
+	private boolean pressedA;
 	
-	public static Sprite bButton;
-	private static float[] colorB = {1,0,0,1};
-	public static float sizeB = 32f;
-	private static boolean pressedB;
+	public Sprite bButton;
+	private float[] colorB = {1,0,0,1};
+	public float sizeB = 32f;
+	private boolean pressedB;
 	
-	public static BitmapFont droidFont_32;
+	public BitmapFont droidFont_32;
 	
-	public static void pressA() {
+	public void pressA() {
 		if (pressedA) return;
 		float h = aButton.getHeight();
 		float w = aButton.getWidth();
@@ -39,7 +39,7 @@ public class Art {
 		pressedA = true;
 	}
 	
-	public static void unpressA() {
+	public void unpressA() {
 		if (! pressedA) return;
 		float h = aButton.getHeight();
 		float w = aButton.getWidth();
@@ -52,7 +52,7 @@ public class Art {
 		pressedA = false;
 	}
 	
-	public static void pressB() {
+	public void pressB() {
 		if (pressedB) return;
 		float h = bButton.getHeight();
 		float w = bButton.getWidth();
@@ -65,7 +65,7 @@ public class Art {
 		pressedB = true;
 	}
 	
-	public static void unpressB() {
+	public void unpressB() {
 		if (! pressedB) return;
 		float h = bButton.getHeight();
 		float w = bButton.getWidth();
@@ -78,7 +78,7 @@ public class Art {
 		pressedB = false;
 	}
 	
-	public static void load () {
+	public void load () {
 		allControls = new Texture (Gdx.files.internal("res/hud.png"));
 		bigPad 		= new Sprite (allControls, 0, 0, (int) sizeBigPad, (int) sizeBigPad);
 		smallPad 	= new Sprite (allControls, 64, 0, (int) sizeSmallPad, (int) sizeSmallPad);

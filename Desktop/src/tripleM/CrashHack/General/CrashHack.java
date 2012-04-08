@@ -36,7 +36,6 @@ public class CrashHack implements ApplicationListener{
 	@Override
 	public void create() {
 		Setup.load();
-		Art.load();
 		Sound.load();
 		fps = new FPSLogger();
 		pantalla = new TitleScreen(ctrl);

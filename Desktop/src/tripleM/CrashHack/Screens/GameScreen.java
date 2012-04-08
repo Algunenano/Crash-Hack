@@ -14,6 +14,7 @@ public class GameScreen implements Screen {
 	public GameScreen(Control _c) {
 		spriteBatch = new SpriteBatch();
 		control = _c;
+		control.loadArt();
 		control.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 	

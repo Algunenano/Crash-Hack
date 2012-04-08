@@ -3,11 +3,11 @@ package tripleM.crashHack;
 import java.lang.reflect.Method;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import tripleM.CrashHack.General.Art;
 import tripleM.CrashHack.General.Control;
 import tripleM.CrashHack.General.Setup;
 import android.util.Log;
 import android.view.*;
+import tripleM.crashHack.ArtControlAndroid;
 
 /* Notice we don't use a ellipse as touch are because all the devices tested
  * doesn't support it (and return a circle instead)
@@ -49,6 +49,8 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 //	private static Method getTouchMinor;
 //	private static Method getOrientation;
 	
+	private ArtControlAndroid Art;
+	
     public ControlAndroid() {		
     	
         buttonPressed = new int [TOTALBUTTONS];
@@ -58,6 +60,12 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 			buttonPressed[i] = NOTPRESSED;
 			Control.actions[i] = false;
 		}
+    }
+    
+    public void loadArt ()
+    {
+    	Art = new ArtControlAndroid();
+		Art.load();
     }
     
     public void setupAPI()

@@ -12,6 +12,9 @@ public class ControlDesktop implements Control, InputProcessor {
 		}
 		
 	}
+	
+	public void loadArt(){
+	}
 
 	public void placePad(int _padX, int _padY, int _padRad) {
 	}
