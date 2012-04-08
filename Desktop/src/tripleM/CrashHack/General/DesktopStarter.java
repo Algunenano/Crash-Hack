@@ -3,8 +3,8 @@ package tripleM.CrashHack.General;
 import com.badlogic.gdx.backends.jogl.JoglApplication;
 
 public class DesktopStarter {
-	public static final int GAME_WIDTH = 480;
-	public static final int GAME_HEIGHT = 320;
+	public static final int GAME_WIDTH = 800;
+	public static final int GAME_HEIGHT = 480;
 	
 	public static void main(String[] args) {
 		

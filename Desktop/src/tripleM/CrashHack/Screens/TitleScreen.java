@@ -81,19 +81,18 @@ public class TitleScreen implements Screen {
 		
 		s.draw(spriteBatch);
 		
-		if (time > 3 * FPS)
+		/*
+		 * TODO: Dibujar menu (Jugar, Opciones, Salir) + Actuar según dónde pinche
+		 * ==> SetScreen MenuScreen
+		 */		
+		if (Control.actions[Control.ANYTHING] == true)
 		{
-			/*
-			 * TODO: Dibujar menu (Jugar, Opciones, Salir) + Actuar según dónde pinche
-			 */
-			
-			if (Control.actions[Control.ANYTHING] == true)
-				CrashHack.setScreen(new GameScreen(control));
+			Control.actions[Control.ANYTHING] = false;
+			CrashHack.setScreen(new GameScreen(control));
 		}
+			
 		
 		spriteBatch.end();
-		
-		Control.actions[Control.ANYTHING] = false;
 
 	}
 
