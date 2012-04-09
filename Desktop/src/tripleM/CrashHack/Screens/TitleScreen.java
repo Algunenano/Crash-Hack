@@ -81,6 +81,8 @@ public class TitleScreen implements Screen {
 		
 		s.draw(spriteBatch);
 		
+		spriteBatch.end();
+		
 		/*
 		 * TODO: Dibujar menu (Jugar, Opciones, Salir) + Actuar según dónde pinche
 		 * ==> SetScreen MenuScreen
@@ -90,9 +92,6 @@ public class TitleScreen implements Screen {
 			Control.actions[Control.ANYTHING] = false;
 			CrashHack.setScreen(new GameScreen(control));
 		}
-			
-		
-		spriteBatch.end();
 
 	}
 
