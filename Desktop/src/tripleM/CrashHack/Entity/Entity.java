@@ -1,10 +1,13 @@
 package tripleM.CrashHack.Entity;
 
-public class Entity {
+import Levels.Level;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+public interface Entity extends Screen {
 	
-	public double x,y;
+	public int x = 0, y = 0;
+	public static TextureRegion texture = new TextureRegion();
 	
-	public void render() {
-		
-	}
+	public void render(Level _lvl);
 }

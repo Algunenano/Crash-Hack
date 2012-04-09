@@ -2,7 +2,6 @@ package tripleM.CrashHack.Screens;
 
 import tripleM.CrashHack.General.Control;
 import tripleM.CrashHack.General.CrashHack;
-import tripleM.CrashHack.General.Strings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -15,7 +14,7 @@ public class TitleScreen implements Screen {
 	
 	private SpriteBatch spriteBatch;
 	private int time;
-	private final int FPS = 60;
+	private final int FPS = 60; //Expected frames per second
 	private static Texture titleTexture;
 	private int WIDHT = 800;
 	private int HEIGHT = 640;

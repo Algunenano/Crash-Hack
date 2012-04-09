@@ -1,6 +1,7 @@
 package tripleM.CrashHack.Screens;
 
 import tripleM.CrashHack.General.Control;
+import tripleM.CrashHack.General.Strings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -18,7 +19,6 @@ public class GameScreen implements Screen {
 	
 	private int map;
 
-	
 	public GameScreen(Control _c) {
 		spriteBatch = new SpriteBatch();
 		control = _c;
@@ -32,6 +32,9 @@ public class GameScreen implements Screen {
 				new TextureRegion(fTexture),
 				false);
 		font.setScale(0.5f);
+		font.setColor(0, 0, 0, 1);
+		
+		map = 1;
 	}
 	
 	@Override
@@ -55,12 +58,14 @@ public class GameScreen implements Screen {
 	public void render(float _delta) {
 		control.render(_delta);
 		spriteBatch.begin();
-		font.draw(spriteBatch, "Wooolololo", 100, 100);
+		font.draw(spriteBatch, Strings.wolo, 100, 100);
 		font.draw(spriteBatch, 
 				"fps:"+Gdx.graphics.getFramesPerSecond(),
 				Gdx.graphics.getWidth() - 80,
 				Gdx.graphics.getHeight() - 20);
 		spriteBatch.end();
+		
+		//TODO: Render level -- Check level state
 	}
 
 	@Override
