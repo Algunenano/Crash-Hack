@@ -4,14 +4,19 @@ import tripleM.CrashHack.General.Control;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class GameScreen implements Screen {
 	private SpriteBatch spriteBatch;
 	private Control control;
-	private int map;
 	private BitmapFont font;
+	private Texture fTexture;
+	
+	private int map;
 
 	
 	public GameScreen(Control _c) {
@@ -19,15 +24,21 @@ public class GameScreen implements Screen {
 		control = _c;
 		control.loadArt();
 		control.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		//font = new BitmapFont(Gdx.files.internal("res/fonts/droidSansMono_32.fnt"), false);
-		font = new BitmapFont(Gdx.files.internal("res/fonts/droidSans_Border.fnt"), false);
+		fTexture = new Texture(Gdx.files.internal("res/fonts/droidSans_Border.png"));
+		fTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		font = new BitmapFont(
+				Gdx.files.internal("res/fonts/droidSans_Border.fnt"),
+				new TextureRegion(fTexture),
+				false);
+		font.setScale(0.5f);
 	}
 	
 	@Override
 	public void dispose() {
 		spriteBatch.dispose();
 		font.dispose();
-
+		fTexture.dispose();
 	}
 
 	@Override
@@ -45,6 +56,10 @@ public class GameScreen implements Screen {
 		control.render(_delta);
 		spriteBatch.begin();
 		font.draw(spriteBatch, "Wooolololo", 100, 100);
+		font.draw(spriteBatch, 
+				"fps:"+Gdx.graphics.getFramesPerSecond(),
+				Gdx.graphics.getWidth() - 80,
+				Gdx.graphics.getHeight() - 20);
 		spriteBatch.end();
 	}
 

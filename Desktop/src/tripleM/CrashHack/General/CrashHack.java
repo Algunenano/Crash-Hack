@@ -15,6 +15,8 @@ public class CrashHack implements ApplicationListener{
 	public static Control ctrl;
 	private static boolean disposeControl = false;
 	
+	private float accum = 0;
+	
 	public CrashHack(Control _ct) {
 		ctrl = _ct;
 	}
@@ -56,7 +58,11 @@ public class CrashHack implements ApplicationListener{
 
 	@Override
 	public void render() {
-		Gdx.gl.glClearColor(0,1,1,0);
+		accum += Gdx.graphics.getDeltaTime();
+		if (accum < 1 / 60.0f) return;
+		accum = 0;
+		
+		Gdx.gl.glClearColor(0.5f,0.5f,1,0);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		pantalla.render(0);
 		
