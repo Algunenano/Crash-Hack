@@ -41,6 +41,7 @@ public class CrashHack implements ApplicationListener{
 		Sound.load();
 		fps = new FPSLogger();
 		pantalla = new TitleScreen(ctrl);
+		ctrl.loadArt();
 	}
 
 	@Override
@@ -51,9 +52,7 @@ public class CrashHack implements ApplicationListener{
 	}
 
 	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-		
+	public void pause() {		
 	}
 
 	@Override
@@ -75,8 +74,6 @@ public class CrashHack implements ApplicationListener{
 	}
 
 	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-		
+	public void resume() {		
 	}
 }

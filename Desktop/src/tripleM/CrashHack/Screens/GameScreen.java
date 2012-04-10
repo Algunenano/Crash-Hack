@@ -8,6 +8,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -19,10 +20,11 @@ public class GameScreen implements Screen {
 	
 	private int map;
 
+	int a;
+	
 	public GameScreen(Control _c) {
 		spriteBatch = new SpriteBatch();
 		control = _c;
-		control.loadArt();
 		control.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		fTexture = new Texture(Gdx.files.internal("res/fonts/droidSans_Border.png"));
 		fTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -33,6 +35,12 @@ public class GameScreen implements Screen {
 				false);
 		font.setScale(0.5f);
 		font.setColor(0, 0, 0, 1);
+		
+		Texture t = new Texture (Gdx.files.internal("res/entities.png"));
+		Sprite s = new Sprite(t, 0, 0, 32, 32);
+		s.setPosition(200, 200);
+		a = control.addUIButton(s, 10, 10, 100, 100);
+		Gdx.app.log("a", ""+a);
 		
 		map = 1;
 	}
@@ -56,7 +64,6 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void render(float _delta) {
-		control.render(_delta);
 		spriteBatch.begin();
 		font.draw(spriteBatch, Strings.wolo, 100, 100);
 		font.draw(spriteBatch, 
@@ -66,10 +73,15 @@ public class GameScreen implements Screen {
 		spriteBatch.end();
 		
 		//TODO: Render level -- Check level state
+		if (control.isPressed(a))
+			Gdx.app.log("Pressed", "muñeco");
+		
+		control.render(_delta);
 	}
 
 	@Override
 	public void resize(int _width, int _height) {
+		spriteBatch = new SpriteBatch();
 		control.resize(_width, _height);
 		
 	}
@@ -82,8 +94,6 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
-
 	}
 
 }

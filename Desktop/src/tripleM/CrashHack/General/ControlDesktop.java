@@ -1,33 +1,68 @@
 package tripleM.CrashHack.General;
 
+import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class ControlDesktop implements Control, InputProcessor {
+	SpriteBatch spriteBatch;
+	
+	static ArrayList<UIButton> buttons = new ArrayList<UIButton>(TOTALBUTTONS);
+	static private int buttonsId;
+	
 	public ControlDesktop() {
+		buttonsId = 0;
 		for (int i = 0; i < TOTALBUTTONS; i++)
 		{
-			Control.actions[i] = false;
+			buttons.add(new UIButton(null, 0, 0, 0, 0, buttonsId++));
 		}
-		
 	}
 	
 	public void loadArt(){
 	}
-
-	public void placePad(int _padX, int _padY, int _padRad) {
+	
+	@Override
+	public int addUIButton(Sprite _sprite, int _minSizeX, int _minSizeY,
+			int _maxSizeX, int _maxSizeY) {
+		buttons.add(new UIButton(_sprite, _minSizeX, _minSizeY, _maxSizeX, _maxSizeY, buttonsId));
+		return buttonsId++;
 	}
 
-	public void placeButtonA(int _buttonAX, int _buttonAY, int _buttonARad) {
+	@Override
+	public boolean isPressed(int _id) {
+		for (int i = 0; i < buttons.size(); i++)
+			if (buttons.get(i).id == _id) return buttons.get(i).isPressed();
+		Gdx.app.log("ControlDesktop.isPressed()", "Wrong id passed");
+		return false;
+	}
+	
+	@Override
+	public void press(int _id) {
+		for (int i = 0; i < buttons.size(); i++)
+			if (buttons.get(i).id == _id) {
+				buttons.get(i).press();
+				return;
+			}
+		Gdx.app.log("ControlDesktop.press()", "Wrong id passed");		
 	}
 
-	public void placeButtonB(int _buttonBX, int _buttonBY, int _buttonBRad) {
+	@Override
+	public void unpress(int _id) {
+		for (int i = 0; i < buttons.size(); i++)
+			if (buttons.get(i).id == _id) {
+				buttons.get(i).unpress();
+				return;
+			}
+		Gdx.app.log("ControlDesktop.unpress()", "Wrong id passed");	
+		
 	}
 
 	@Override
 	public boolean keyDown(int _key) {
-		Control.actions[ANYTHING] = true;
+		buttons.get(ANYTHING).press();
 		
 		int button = -1;
 		
@@ -40,7 +75,7 @@ public class ControlDesktop implements Control, InputProcessor {
 		
 		if ((button != -1)) {
 			Gdx.app.log ("Key pressed","" + button);
-			Control.actions[button] = true;
+			buttons.get(button).press();
 			return true;
 		}
 		return false;
@@ -48,7 +83,7 @@ public class ControlDesktop implements Control, InputProcessor {
 
 	@Override
 	public boolean keyUp(int _key) {
-		Control.actions[ANYTHING] = true;
+		buttons.get(ANYTHING).press();
 		
 		int button = -1;
 		
@@ -61,7 +96,7 @@ public class ControlDesktop implements Control, InputProcessor {
 		
 		if ((button != -1)) {
 			Gdx.app.log ("Key unpressed","" + button);
-			Control.actions[button] = false;
+			buttons.get(button).unpress();
 			return true;
 		}
 		return false;
@@ -69,26 +104,24 @@ public class ControlDesktop implements Control, InputProcessor {
 
 	@Override
 	public boolean keyTyped(char arg0) {
-		Control.actions[ANYTHING] = true;
+		buttons.get(ANYTHING).press();
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int arg0) {
-		Control.actions[ANYTHING] = true;
+		buttons.get(ANYTHING).press();
 		return false;
 	}
 	
 
 	@Override
 	public boolean touchDown(int _x, int _y, int _p, int arg3) {
-		Control.actions[ANYTHING] = true;
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int _x, int _y, int _p) {
-		Control.actions[ANYTHING] = true;
 		return false;
 	}
 
@@ -99,17 +132,44 @@ public class ControlDesktop implements Control, InputProcessor {
 
 	@Override
 	public boolean touchUp(int _x, int _y, int _p, int arg3) {
-		Control.actions[ANYTHING] = true;
-		return false;
+		buttons.get(ANYTHING).press();
+		
+		boolean ret = false;
+		int texY = Gdx.graphics.getHeight() - _y;
+		
+		for (int i = 0; i < buttons.size(); i++)
+		{
+			if (buttons.get(i).isTouched(_x, texY)) {
+				buttons.get(i).press();
+				ret = true;
+			}
+		}
+		
+		return ret;
 	}
 
 	@Override
 	public void render(float delta) {
-		Control.actions[ANYTHING] = false;
+		spriteBatch.begin();
+		
+		for (int i = TOTALBUTTONS - 1; i < buttons.size(); i++) {
+			buttons.get(i).render(spriteBatch);		
+			buttons.get(i).unpress();
+		}
+		
+		spriteBatch.end();
+		
+		buttons.get(ANYTHING).unpress();
 	}
 
 	@Override
-	public void resize(int _width, int _height) {		
+	public void resize(int _width, int _height) {
+		spriteBatch = new SpriteBatch();
+		
+		for (int i = TOTALBUTTONS - 1; i < buttons.size(); i++)
+		{	
+			buttons.get(i).resize(_width, _height);
+		}
 	}
 
 	@Override
@@ -130,7 +190,6 @@ public class ControlDesktop implements Control, InputProcessor {
 
 	@Override
 	public void dispose() {
-	}
-	
-	
+		spriteBatch.dispose();
+	}	
 }

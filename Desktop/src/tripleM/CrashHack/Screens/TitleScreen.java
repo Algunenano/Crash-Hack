@@ -44,14 +44,10 @@ public class TitleScreen implements Screen {
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void render(float arg0) {
-		
-		
 		time++;
 		
 		if (time <= (FPS / 2))
@@ -86,9 +82,10 @@ public class TitleScreen implements Screen {
 		 * TODO: Dibujar menu (Jugar, Opciones, Salir) + Actuar según dónde pinche
 		 * ==> SetScreen MenuScreen
 		 */		
-		if (Control.actions[Control.ANYTHING] == true)
+		if (control.isPressed(Control.ANYTHING))
 		{
-			Control.actions[Control.ANYTHING] = false;
+			
+			control.unpress(Control.ANYTHING);
 			CrashHack.setScreen(new GameScreen(control));
 		}
 
@@ -109,14 +106,11 @@ public class TitleScreen implements Screen {
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
+		this.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
-
 	}
 
 }

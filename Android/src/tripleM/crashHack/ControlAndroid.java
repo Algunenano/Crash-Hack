@@ -1,7 +1,8 @@
 package tripleM.crashHack;
 
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import tripleM.CrashHack.General.Control;
 import tripleM.CrashHack.General.Setup;
@@ -9,234 +10,259 @@ import android.util.Log;
 import android.view.*;
 import tripleM.crashHack.ArtControlAndroid;
 
-/* Notice we don't use a ellipse as touch are because all the devices tested
- * doesn't support it (and return a circle instead)
- */
 public class ControlAndroid implements Control, View.OnTouchListener {
 
 	private SpriteBatch spriteBatch; //Initialize in resize()
-	private int[] 		buttonPressed;
 	
 	private final float MAXIMUM_RATIO = 2;
 	private final float MINIMUM_RATIO = 0.5f;
 	private final float PAD_FRACTION_HEIGHT = 3; //Fraction of the screen for the pad
 	private final float PAD_FRACTION_WIDTH = 4;
-	private final int PAD_MARGIN = 10;
+	private final int 	PAD_MARGIN = 10;
 	
 	private final float AB_FRACTION_WIDTH = 3;
 	private final float AB_FRACTION_HEIGHT = 3;
-	private final float AB_MARGIN = 20;
-	
-	private final int BUTTONS_MARGIN = 5; // Margin (in pixels) added around the buttons to detect touch
-	
+	private final float AB_MARGIN = 15;
+		
 	private final int MAX_PRECISION = 5; // If the precision of the device is over this we use the old method. Why? Cause fuck'em. Thats why.
 	
 	public static final int NOTPRESSED = -1;
 
-	private int padX;
-	private int padY;
-	private int padRad;
-	private int buttonAX;
-	private int buttonAY;
-	private int buttonARad;
-	private int buttonBX;
-	private int buttonBY;
-	private int buttonBRad;
-	
-	private static boolean APILEVEL;
 	private static boolean APILEVELtested;
-	private static Method getTouchMajor; 
-//	private static Method getTouchMinor;
-//	private static Method getOrientation;
 	
-	private ArtControlAndroid Art;
+	private ArtControlAndroid art;
 	
-    public ControlAndroid() {		
-    	
-        buttonPressed = new int [TOTALBUTTONS];
-		
-		for (int i = 0; i < TOTALBUTTONS; i++)
-		{
-			buttonPressed[i] = NOTPRESSED;
-			Control.actions[i] = false;
-		}
+	static ArrayList<UIButtonAndroid> buttons;
+	static private int buttonsId;
+	
+    public ControlAndroid() {
+		buttons = new ArrayList<UIButtonAndroid>();		
     }
     
     public void loadArt ()
     {
-    	Art = new ArtControlAndroid();
-		Art.load();
+    	art = new ArtControlAndroid();
+		art.load();
+		
+		for (buttonsId = 0; buttonsId <= RIGHT; buttonsId++)
+		{
+			buttons.add(new UIButtonAndroid (null, 0, 0, 0, 0, buttonsId));
+		}
+		
+		int _height = Gdx.graphics.getHeight();
+		int _width = Gdx.graphics.getWidth();
+		
+		// A-B buttons
+		float size = ArtControlAndroid.sizeA;
+		float ratio = Math.min(
+				((_height / AB_FRACTION_HEIGHT) / (2 * size + AB_MARGIN)),
+				((_width / AB_FRACTION_WIDTH) / (2 * size + AB_MARGIN + MAX_PRECISION)));
+		if (ratio > MAXIMUM_RATIO) ratio = MAXIMUM_RATIO;
+		if (ratio < MINIMUM_RATIO) ratio = MINIMUM_RATIO;		
+		int wid = (int) (size * ratio);
+		
+		ArtControlAndroid.aButtonUnpressed.setSize(wid, wid);
+		ArtControlAndroid.aButtonUnpressed.setPosition 
+			(_width - (3 * AB_MARGIN + wid), AB_MARGIN);
+		
+		ArtControlAndroid.bButtonUnpressed.setSize(wid, wid);
+		ArtControlAndroid.bButtonUnpressed.setPosition
+			(_width - AB_MARGIN, wid);
+
+		buttons.add(new UIButtonAndroid_A(ArtControlAndroid.aButtonUnpressed, 
+				(int) (size * MINIMUM_RATIO), (int) (size * MINIMUM_RATIO), 
+				(int) (size * MAXIMUM_RATIO), (int) (size * MAXIMUM_RATIO),
+				buttonsId++));
+		buttons.add(new UIButtonAndroid_B(ArtControlAndroid.bButtonUnpressed, 
+				(int) (size * MINIMUM_RATIO), (int) (size * MINIMUM_RATIO), 
+				(int) (size * MAXIMUM_RATIO), (int) (size * MAXIMUM_RATIO),
+				buttonsId++));
+		
+		//PAD
+		
+		size = ArtControlAndroid.sizeBigPad;
+		ratio = Math.min(
+				(((float) _height / PAD_FRACTION_HEIGHT) / (size + PAD_MARGIN)),
+				(((float) _width / PAD_FRACTION_WIDTH) / (size + PAD_MARGIN)));
+		if (ratio > MAXIMUM_RATIO) ratio = MAXIMUM_RATIO;
+		else if (ratio < MINIMUM_RATIO) ratio = MINIMUM_RATIO;
+		wid = (int) (size * ratio);
+
+		ArtControlAndroid.bigPad.setSize(wid, wid);
+		ArtControlAndroid.bigPad.setPosition(PAD_MARGIN, PAD_MARGIN);
+		
+		buttons.add(new UIButtonAndroid_PAD(ArtControlAndroid.bigPad,
+				(int) (size * MINIMUM_RATIO), (int) (size * MINIMUM_RATIO),
+				(int) (size * MAXIMUM_RATIO), (int) (size * MAXIMUM_RATIO),
+				buttonsId++));
+		
+		resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
     
     public void setupAPI()
     {
 		if (Setup.getConfigInt(Setup.fatfingers, 0) == 1)
 		{
-			APILEVEL = false;
 			APILEVELtested = true;
 		}
 		else
 		{
-			APILEVEL = true;
-			APILEVELtested = false;
+			APILEVELtested = true;
 			try {
 				Class<?> c[] = new Class[1];
 				c[0] = int.class;
 				
-				getTouchMajor = MotionEvent.class.getMethod("getTouchMajor", c);
-//				getTouchMinor = MotionEvent.class.getMethod("getTouchMinor", c);
-//				getOrientation  = MotionEvent.class.getMethod("getOrientation", c);			
+				UIButtonAndroid.getTouchMajor = MotionEvent.class.getMethod("getTouchMajor", c);
+//				UIButtonAndroid.getTouchMinor = MotionEvent.class.getMethod("getTouchMinor", c);
+//				UIButtonAndroid.getOrientation  = MotionEvent.class.getMethod("getOrientation", c);			
 			} catch (Exception e) {
-				Log.v("API level", "Incapable of detecting touched areas");
-				APILEVEL = false;
+				Log.v("API level", "Unable of detecting touched areas");
 			}
 		}
     }
+
+	@Override
+	public int addUIButton(Sprite _sprite, int _minSizeX, int _minSizeY,
+			int _maxSizeX, int _maxSizeY) {
+		buttons.add(new UIButtonAndroid(_sprite, _minSizeX, _minSizeY, _maxSizeX, _maxSizeY, buttonsId));
+		return buttonsId++;
+	}
+
+	@Override
+	public boolean isPressed(int _id) {
+		for (int i = 0; i < buttons.size(); i++)
+			if (buttons.get(i).id == _id) return buttons.get(i).isPressed();
+		Gdx.app.log("ControlDesktop.isPressed()", "Wrong id passed");
+		return false;
+	}
+
+	@Override
+	public void press(int _id) {
+		for (int i = 0; i < buttons.size(); i++)
+			if (buttons.get(i).id == _id) {
+				buttons.get(i).press();
+				return;
+			}
+		Gdx.app.log("ControlDesktop.press()", "Wrong id passed");			
+	}
+
+	@Override
+	public void unpress(int _id) {
+		for (int i = 0; i < buttons.size(); i++)
+			if (buttons.get(i).id == _id) {
+				buttons.get(i).unpress();
+				return;
+			}
+		Gdx.app.log("ControlDesktop.unpress()", "Wrong id passed");			
+	}
     
-	public void placePad(int _padX, int _padY, int _padRad) {
-		this.padX = _padX;
-		this.padY = _padY;
-		this.padRad = _padRad;
-	}
-
-	public void placeButtonA(int _buttonAX, int _buttonAY, int _buttonARad) {
-		this.buttonAX = _buttonAX;
-		this.buttonAY = _buttonAY;
-		this.buttonARad = _buttonARad;
-	}
-
-	public void placeButtonB(int _buttonBX, int _buttonBY, int _buttonBRad) {
-		this.buttonBX = _buttonBX;
-		this.buttonBY = _buttonBY;
-		this.buttonBRad = _buttonBRad;
-	}
-
-	private boolean isPadTouched(int _x, int _y, int _p, MotionEvent _event) {
-		//Don't care about radius
-		if ((Math.abs(_x - padX) >= padRad) || (Math.abs(_y - padY) >= padRad))
-			return false;
-		return true;
-	}
-
-	private boolean isButtonATouched(int _x, int _y, int _p, MotionEvent _event) {
-		// Not capable of detecting touching areas
-		if (!APILEVEL)
-		{
-			return (Math.abs(_x - buttonAX) <= buttonARad) && (Math.abs(_y - buttonAY) <= buttonARad);
-		}
-		
-		int d = Math.abs(_x - buttonAX);
-		d += Math.abs(_y - buttonAY);
-		d *= Math.sqrt(2);
-		
-		Object o[] = new Object [] {_p};
-		float rad = 0;
-		try {
-			rad = (Float) ControlAndroid.getTouchMajor.invoke(_event, o);
-		} catch (Exception e) {
-			Gdx.app.log("API level", "isButtonATouched " + getTouchMajor.getName());
-		}
-		
-		if (d < (buttonARad + rad))
-				return true;
-		return false;
-	}
-
-	private boolean isButtonBTouched(int _x, int _y, int _p, MotionEvent _event) {
-		// Not capable of detecting touching areas
-		if (!APILEVEL)
-		{
-			return (Math.abs(_x - buttonBX) <= buttonBRad) && (Math.abs(_y - buttonBY) <= buttonBRad);
-		}
-		
-		int d = Math.abs(_x - buttonBX);
-		d += Math.abs(_y - buttonBY);
-		d *= Math.sqrt(2);
-		
-		Object o[] = new Object [] {_p};
-		float rad = 0;
-		try {
-			rad = (Float) ControlAndroid.getTouchMajor.invoke(_event, o);
-		} catch (Exception e) {
-			Gdx.app.log("API level", "isButtonATouched " + getTouchMajor.getName());
-		}
-		
-		if (d < (buttonBRad + rad))
-				return true;
-		return false;
-	}
-
-	public boolean touchDown(int _x, int _y, int _p, MotionEvent _event) {
+	public boolean touchDown(int _x, int __y, int _p, MotionEvent _event) {
 		boolean aux = false;
-		Control.actions[ANYTHING] = true;
+		buttons.get(ANYTHING).press();
+		int texY = Gdx.graphics.getHeight() - __y;
 		
-		if ((buttonPressed[A] == NOTPRESSED) && isButtonATouched(_x, _y, _p, _event)) {
-			buttonPressed[A] = _p;
+		// Buttons A & B
+		if ( (!buttons.get(A).isPressed()) && buttons.get(A).isTouched(_x, texY, _p, _event)) {
+			buttons.get(A).press();
 			aux = true;
 		}
-
-		if ((buttonPressed[B] == NOTPRESSED) && isButtonBTouched(_x, _y, _p, _event)) {
-			buttonPressed[B] = _p;
+			
+		if ( !buttons.get(B).isPressed() && buttons.get(B).isTouched(_x, texY, _p, _event)) {
+			buttons.get(B).press();
 			aux = true;
 		}
-
-		if ((buttonPressed[PAD] == NOTPRESSED) && (isPadTouched(_x, _y, _p, _event))) {
-			buttonPressed[PAD] = _p;
+		
+		// PAD
+		if ( !buttons.get(PAD).isPressed() && buttons.get(PAD).isTouched(_x, texY, _p, _event)) {
+			buttons.get(PAD).press();
+			
+			float padRad = buttons.get(PAD).sprite.getHeight() / 2;
+			float padX = buttons.get(PAD).sprite.getX() + padRad;
+			float padY = buttons.get(PAD).sprite.getY() + padRad;
+			
+			
+			if (texY < (padY - 0.3 * padRad))
+				buttons.get(UP).press();
+			else buttons.get(UP).unpress();
+			
+			if (texY > (padY + 0.3 * padRad))
+				buttons.get(DOWN).press();
+			else buttons.get(DOWN).unpress();
+			
+			if (_x > (padX + 0.3 * padRad))
+				buttons.get(RIGHT).press();
+			else buttons.get(RIGHT).unpress();
+			
+			if (_x < (padX - 0.3 * padRad))
+				buttons.get(LEFT).press();
+			else buttons.get(LEFT).unpress();
+			
 			aux = true;
-			buttonPressed[UP] = (_y < (padY - 0.3 * padRad)) ? _p : NOTPRESSED;
-			buttonPressed[DOWN] = (_y > (padY + 0.3 * padRad)) ? _p : NOTPRESSED;
-			buttonPressed[RIGHT] = (_x > (padX + 0.3 * padRad)) ? _p : NOTPRESSED;
-			buttonPressed[LEFT] = (_x < (padX - 0.3 * padRad)) ? _p : NOTPRESSED;
 		}
-
+		
+		//Other
+		for (int i = TOTALBUTTONS; i < buttons.size(); i++) {
+			UIButtonAndroid ba = buttons.get(i);
+			if ((!ba.isPressed()) && (ba.isTouched(_x, texY, _p, _event))) {
+				buttons.get(i).press();
+				aux = true;
+			}
+		}
+		
 		return aux;
 	}
 
-	public boolean touchDragged(int _x, int _y, int _p, MotionEvent _event) {
+	public boolean touchDragged(int _x, int __y, int _p, MotionEvent _event) {
 		boolean aux = false;
+		int texY = Gdx.graphics.getHeight() - __y;
 		
-		Control.actions[ANYTHING] = true;
+		buttons.get(ANYTHING).press();
 		
-		// Check (and update) the PAD in case of dragging
-		if ((_p == buttonPressed[PAD]) || (isPadTouched(_x, _y, _p, _event))) {
-			aux = true;
-			buttonPressed[PAD] = _p;
-			buttonPressed[UP] = (_y < (padY - 0.3 * padRad)) ? _p : NOTPRESSED;
-			buttonPressed[DOWN] = (_y > (padY + 0.3 * padRad)) ? _p : NOTPRESSED;
-			buttonPressed[RIGHT] = (_x > (padX + 0.3 * padRad)) ? _p : NOTPRESSED;
-			buttonPressed[LEFT] = (_x < (padX - 0.3 * padRad)) ? _p : NOTPRESSED;
+		for (int i = 0; i < buttons.size(); i++) {
+			UIButtonAndroid b = buttons.get(i);
+			if (b.isPressed() && (b.pressedby == _p)) {
+				if (b.id != PAD) {
+					if (! b.isTouched(_x, texY, _p, _event)) b.unpress();
+				} else {
+					float padRad = buttons.get(PAD).sprite.getHeight() / 2;
+					float padX = buttons.get(PAD).sprite.getX() + padRad;
+					float padY = buttons.get(PAD).sprite.getY() + padRad;
+					
+					
+					if (texY < (padY - 0.3 * padRad))
+						buttons.get(UP).press();
+					else buttons.get(UP).unpress();
+					
+					if (texY > (padY + 0.3 * padRad))
+						buttons.get(DOWN).press();
+					else buttons.get(DOWN).unpress();
+					
+					if (_x > (padX + 0.3 * padRad))
+						buttons.get(RIGHT).press();
+					else buttons.get(RIGHT).unpress();
+					
+					if (_x < (padX - 0.3 * padRad))
+						buttons.get(LEFT).press();
+					else buttons.get(LEFT).unpress();
+				}
+ 			} else {
+ 				if (b.isTouched(_x, texY, _p, _event))
+ 					b.press();
+ 			}
 		}
 		
-		// Now we do care about the other buttons		
-		if (isButtonATouched(_x, _y, _p, _event)) {
-			buttonPressed[A] = _p;
-			aux = true;
-		} else {
-			if (buttonPressed[A] == _p)
-				buttonPressed[A] = NOTPRESSED;
-		}
-		
-		
-		if (isButtonBTouched(_x, _y, _p, _event)) {
-			buttonPressed[B] = _p;
-			aux = true;
-		} else {
-			if (buttonPressed[B] == _p)
-				buttonPressed[B] = NOTPRESSED;
-		}
-
 		return aux;
 	}
 
 	public boolean touchUp(int _x, int _y, int _p, MotionEvent _event) {
 		boolean ret = false;
 		
-		Control.actions[ANYTHING] = true;
+		buttons.get(ANYTHING).press();
 
-		// Test pointer to pressed[]
-		for (int i = 0; i < TOTALBUTTONS; i++) {
-			if (buttonPressed[i] == _p) {
-				buttonPressed[i] = NOTPRESSED;
+		for (int i = 0; i < buttons.size(); i++) {
+			UIButtonAndroid ba = buttons.get(i);
+			if ((ba.isPressed()) && (ba.pressedby == _p)) {
+				buttons.get(i).unpress();
 				ret = true;
 			}
 		}
@@ -246,52 +272,14 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 
 	@Override
 	public void render(float delta) {
-		for (int i = 0; i < TOTALBUTTONS; i++)
-			Control.actions[i] = (buttonPressed[i] != NOTPRESSED);
-		
-		
 		spriteBatch.begin();
 		
-		Art.bigPad.draw(spriteBatch);
-		
-		int sr = (int) Art.bigPad.getHeight() / 4;
-		int x = (int) Art.bigPad.getX() +sr;
-		int y = (int) Art.bigPad.getY() +sr;
-		
-		int up = 0;
-		int right = 0;
-		
-		if (Control.actions[PAD])
-		{			
-			up += Control.actions[UP] 		? sr : 0;
-			up -= Control.actions[DOWN] 	? sr : 0;
-			right += Control.actions[RIGHT] ? sr : 0;
-			right -= Control.actions[LEFT]	? sr : 0;
-			
-			if ((up != 0) && (right != 0))
-			{
-				up *= Math.sqrt(2) / 2;
-				right *= Math.sqrt(2) / 2;
-			}
-		}
-		Art.smallPad.setPosition(x + right, y + up);
-		
-		if (Control.actions[A])
-			Art.pressA();
-		else Art.unpressA();
-		
-		if (Control.actions[B])
-			Art.pressB();
-		else Art.unpressB();
-		
-
-		Art.smallPad.draw(spriteBatch);
-		Art.aButton.draw(spriteBatch);
-		Art.bButton.draw(spriteBatch);
+		for (int i = 0; i < buttons.size(); i++)
+			buttons.get(i).render(spriteBatch);
 			
 		spriteBatch.end();
 		
-		Control.actions[ANYTHING] = false;
+		buttons.get(ANYTHING).unpress();
 		
 	}
 
@@ -300,65 +288,8 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 
 		spriteBatch = new SpriteBatch();
 		
-		// PAD
-		
-		float ratio = Math.min(
-				(((float) _height / PAD_FRACTION_HEIGHT) / (Art.sizeBigPad + PAD_MARGIN)),
-				(((float) _width / PAD_FRACTION_WIDTH) / (Art.sizeBigPad + PAD_MARGIN)));
-		
-		if (ratio > MAXIMUM_RATIO) ratio = MAXIMUM_RATIO;
-		else if (ratio < MINIMUM_RATIO) ratio = MINIMUM_RATIO;
-		
-		int rad = (int) Art.sizeBigPad / 2;
-		rad *= ratio;		
-		Art.bigPad.setPosition(PAD_MARGIN, PAD_MARGIN);
-		Art.smallPad.setPosition(Art.bigPad.getX() + rad, Art.bigPad.getY() + rad);
-		
-		Art.bigPad.setSize(Art.sizeBigPad * ratio, Art.sizeBigPad * ratio);			
-		Art.smallPad.setSize(Art.sizeSmallPad * ratio, Art.sizeSmallPad * ratio);
-		
-		
-		placePad(
-				(int) (Art.bigPad.getX() + rad),
-				_height - (int) (Art.bigPad.getY() + rad),
-				(int) (rad * Math.sqrt(2))); //Complete circle + Error margin
-	
-		
-		// A and B buttons
-		ratio = Math.min(
-				((_height / AB_FRACTION_HEIGHT) / (2 * Art.sizeA + AB_MARGIN)),
-				((_width / AB_FRACTION_WIDTH) / (2 * Art.sizeA + AB_MARGIN + MAX_PRECISION)));
-		if (ratio > MAXIMUM_RATIO) ratio = MAXIMUM_RATIO;
-		if (ratio < MINIMUM_RATIO) ratio = MINIMUM_RATIO;
-		
-		
-		rad = (int) Art.sizeA / 2;
-		rad *= ratio;
-		
-		int wid = (int) (Art.sizeA * ratio);
-		
-		
-		Art.bButton.setPosition(_width - (wid + AB_MARGIN), AB_MARGIN + wid);
-		Art.aButton.setPosition(_width - (2 * wid + 2 * AB_MARGIN + MAX_PRECISION), AB_MARGIN);
-		
-		Art.bButton.setSize(Art.sizeB * ratio, Art.sizeB * ratio);
-		Art.aButton.setSize(Art.sizeA * ratio, Art.sizeA * ratio);
-		
-		
-		
-		placeButtonA(
-				(int) (Art.aButton.getX() + rad), 
-				_height - (int) (Art.aButton.getY() + rad), 
-				(int) (rad * Math.sqrt(2)) + BUTTONS_MARGIN);
-		
-		
-
-		placeButtonB(
-				(int) (Art.bButton.getX() + rad),
-			 	_height - (int) (Art.bButton.getY() + rad), 
-			 	(int) (rad * Math.sqrt(2)) + BUTTONS_MARGIN);
-			
-		
+		for (int i = 0; i < buttons.size(); i++)
+			buttons.get(i).resize(_width, _height);		
 	}
 
 	@Override
@@ -397,12 +328,12 @@ public class ControlAndroid implements Control, View.OnTouchListener {
 
 		int x = 0, y = 0;
 		
-		if (APILEVEL && ! APILEVELtested)
+		if ( !APILEVELtested)
 		{
 			APILEVELtested = true;
 			if (event.getXPrecision() > MAX_PRECISION)
 			{
-				APILEVEL = false;
+				UIButtonAndroid.getTouchMajor = null;
 				Gdx.app.log("Precision", "Yours sucks. So we use old method instead");
 			}				
 		}
